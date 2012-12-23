@@ -1,0 +1,38 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/tvlatlong"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Large Text"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <EditText
+        android:id="@+id/etAddress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPostalAddress" >
+
+        <requestFocus />
+    </EditText>
+
+    <Button
+        android:id="@+id/bGo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Go" />
+
+    <com.google.android.maps.MapView
+        android:id="@+id/mvMain"
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:apiKey="0F6uUF3MfG0H6fLMDMLYvZyq20ZsWNxPloJIzEg"
+        android:clickable="true" >
+    </com.google.android.maps.MapView>
+
+</LinearLayout>
