@@ -52,6 +52,7 @@ public class MainActivity extends MapActivity implements View.OnClickListener {
 		setContentView(R.layout.activity_main);
 		map = (MapView) findViewById(R.id.mvMain);
 		map.setBuiltInZoomControls(true);
+		//GooglePlayServicesUtil.getOpenSourceSoftwareLicenseInfo;
 
 		latlong = (TextView) findViewById(R.id.tvlatlong);
 		destAddress = (EditText) findViewById(R.id.etAddress);
