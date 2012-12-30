@@ -23,7 +23,7 @@ public class Splash extends Activity{
 				} catch(InterruptedException e){
 					e.printStackTrace();
 				}finally{
-					Intent openStartingPoint = new Intent("com.MAIN");
+					Intent openStartingPoint = new Intent("com.HOME");
 					startActivity(openStartingPoint);
 				}	
 			}

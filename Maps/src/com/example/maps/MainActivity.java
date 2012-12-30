@@ -3,7 +3,9 @@ package com.example.maps;
 import java.io.IOException;
 import java.util.List;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
@@ -13,6 +15,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -160,56 +163,81 @@ public class MainActivity extends MapActivity implements View.OnClickListener {
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.bStart:
+			// hides keyboard after clicking Start
+			InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+			mgr.hideSoftInputFromWindow(destAddress.getWindowToken(), 0);
+			
+			//creates error alert screen 
+			if (destAddress.getText().equals("")) {
+				AlertDialog.Builder adb = new AlertDialog.Builder(this);
+				adb.setTitle("Missing Address");
+				adb.setMessage("Please enter a valid Address");
+				adb.setPositiveButton("Ok",
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
+								dialog.cancel();
+							}
+						});
+				// create alert dialog
+				AlertDialog alertDialog = adb.create();
 
-			try {
-				Geocoder coder = new Geocoder(this);
-				List<Address> address;
-				// test
-				address = coder.getFromLocationName(destAddress.getText()
-						.toString(), 5);
-				Address location = address.get(0);
-				destLat = location.getLatitude();
-				destLong = location.getLongitude();
+				// show it
+				alertDialog.show();
+				
+			} else {
+				try {
+					Geocoder coder = new Geocoder(this);
+					List<Address> address;
+					// test
+					address = coder.getFromLocationName(destAddress.getText()
+							.toString(), 5);
+					Address location = address.get(0);
+					destLat = location.getLatitude();
+					destLong = location.getLongitude();
 
-				GeoPoint p1 = new GeoPoint(
-						(int) (location.getLatitude() * 1E6),
-						(int) (location.getLongitude() * 1E6));
+					GeoPoint p1 = new GeoPoint(
+							(int) (location.getLatitude() * 1E6),
+							(int) (location.getLongitude() * 1E6));
 
-				mc.animateTo(p1); // map goes to the coordinates
-				mc.setZoom(17); // set your zoom level
-				map.invalidate();
+					mc.animateTo(p1); // map goes to the coordinates
+					mc.setZoom(17); // set your zoom level
+					map.invalidate();
 
-				// double currentLat = loc.getLatitude();
-				// double currentLong = loc.getLongitude();
-				// double currentLat = 40.4286995;
-				// double currentLong = -74.3635812;
-				// double dist = distance(destLat, destLong, currentLat,
-				// currentLong);
-				// latlong.setText("Distance to destination: " +
-				// String.valueOf(dist));
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} finally {
-				// ---use the LocationManager class to obtain GPS locations---
-				lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+					// double currentLat = loc.getLatitude();
+					// double currentLong = loc.getLongitude();
+					// double currentLat = 40.4286995;
+					// double currentLong = -74.3635812;
+					// double dist = distance(destLat, destLong, currentLat,
+					// currentLong);
+					// latlong.setText("Distance to destination: " +
+					// String.valueOf(dist));
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} finally {
+					// ---use the LocationManager class to obtain GPS
+					// locations---
+					lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-				locationListener = new MyLocationListener(); // a location
-																// listener to
-																// be used below
+					locationListener = new MyLocationListener(); // a location
+																	// listener
+																	// to
+																	// be used
+																	// below
 
-				lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-						1 * 60 * 1000, 0, locationListener); // updates your
-																// location
-																// every 1 min
+					lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+							1 * 60 * 1000, 0, locationListener); // updates your
+																	// location
+																	// every 1
+																	// min
+				}
+				break;
+				/*
+				 * case R.id.bStop: vibrate.cancel(); // should stop vibration
+				 * on stop button lm.removeUpdates(locationListener); // should
+				 * stop gps updates of // locationListener break;
+				 */
 			}
-			break;
-		/*case R.id.bStop:
-			vibrate.cancel(); // should stop vibration on stop button
-			lm.removeUpdates(locationListener); // should stop gps updates of
-												// locationListener
-			break;
-			*/
 		}
 	}
 
