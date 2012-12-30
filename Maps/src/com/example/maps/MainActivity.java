@@ -34,7 +34,7 @@ import com.google.android.maps.MapView;
 public class MainActivity extends MapActivity implements View.OnClickListener {
 
 	private LocationManager lm;
-	private LocationListener locationListener;
+	protected LocationListener locationListener;
 
 	MapView map;
 	private MapController mc;
@@ -151,8 +151,9 @@ public class MainActivity extends MapActivity implements View.OnClickListener {
 	@Override
 	protected void onPause() {
 		// TODO Auto-generated method stub
-		super.onPause();
 		vibrate.cancel(); // stops the vibration alarm on leaving app?
+		super.onPause();
+		
 
 	}
 
