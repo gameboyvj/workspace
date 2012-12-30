@@ -14,8 +14,8 @@ public class Home extends Activity implements OnClickListener{
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.home);
-		LinearLayout layout = (LinearLayout) getWindow().findViewById(R.id.title_complex);
-		layout.addView(new Button(this));
+		//LinearLayout layout = (LinearLayout) getWindow().findViewById(R.id.title_complex);
+		//layout.addView(new Button(this));
 		//layout.addView(new Button(this));
 	}
 
