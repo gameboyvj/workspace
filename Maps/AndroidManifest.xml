@@ -22,7 +22,8 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <uses-library android:name="com.google.android.maps" />
-	<activity
+
+        <activity
             android:name=".Splash"
             android:label="@string/app_name" >
             <intent-filter>
@@ -36,6 +37,15 @@
             android:label="@string/title_activity_main" >
             <intent-filter>
                 <action android:name="com.MAIN" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".endPoint"
+            android:label="@string/title_activity_main" >
+            <intent-filter>
+                <action android:name="com.ENDPOINT" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
