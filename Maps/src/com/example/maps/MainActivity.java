@@ -164,6 +164,7 @@ public class MainActivity extends MapActivity implements View.OnClickListener {
 			try {
 				Geocoder coder = new Geocoder(this);
 				List<Address> address;
+				//test
 				address = coder.getFromLocationName(destAddress.getText().toString(),5);
 				Address location = address.get(0);
 				destLat = location.getLatitude();
