@@ -5,4 +5,11 @@
     android:orientation="vertical" 
     android:id="@+id/title_complex">
 
+    <FrameLayout
+        android:id="@+id/flMenu"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center" >
+    </FrameLayout>
+
 </LinearLayout>
