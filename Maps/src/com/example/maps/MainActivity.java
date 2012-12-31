@@ -7,6 +7,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -14,6 +15,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -166,8 +168,8 @@ public class MainActivity extends MapActivity implements View.OnClickListener {
 			// hides keyboard after clicking Start
 			InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 			mgr.hideSoftInputFromWindow(destAddress.getWindowToken(), 0);
-			
-			//creates error alert screen 
+
+			// creates error alert screen
 			if (destAddress.getText().equals("")) {
 				AlertDialog.Builder adb = new AlertDialog.Builder(this);
 				adb.setTitle("Missing Address");
@@ -183,7 +185,7 @@ public class MainActivity extends MapActivity implements View.OnClickListener {
 
 				// show it
 				alertDialog.show();
-				
+
 			} else {
 				try {
 					Geocoder coder = new Geocoder(this);
@@ -224,9 +226,11 @@ public class MainActivity extends MapActivity implements View.OnClickListener {
 																	// to
 																	// be used
 																	// below
-
+					SharedPreferences getPrefs = PreferenceManager
+							.getDefaultSharedPreferences(getBaseContext());
+					long interval = getPrefs.getLong("updateInterval", 1); //gets value for gps update interval, defaults to 1
 					lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-							1 * 60 * 1000, 0, locationListener); // updates your
+							 interval * 60 * 1000, 0, locationListener); // updates your
 																	// location
 																	// every 1
 																	// min
