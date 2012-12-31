@@ -43,7 +43,7 @@ public class endPoint extends Activity implements OnClickListener {
 		vibrate.vibrate(pattern, 0);
 	}
 
-	@Override
+	
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
 

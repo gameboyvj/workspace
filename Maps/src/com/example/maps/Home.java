@@ -2,8 +2,10 @@ package com.example.maps;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -25,17 +27,37 @@ public class Home extends Activity implements OnClickListener{
 		//layout.addView(new Button(this));
 	}
 
-	@Override
+
 	public void onClick(View arg0) {
 		// TODO Auto-generated method stub
 		
 	}
-	@SuppressLint("NewApi")
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu)
-	{
-	   menu.add(0, 2, 0, "Options").setShowAsAction(MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
 
-	   return true;
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// TODO Auto-generated method stub
+		super.onCreateOptionsMenu(menu);
+		MenuInflater blowUp = getMenuInflater();
+		blowUp.inflate(R.menu.menu, menu);
+		return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// TODO Auto-generated method stub
+		switch (item.getItemId()) {
+		case R.id.aboutUs:
+			Intent i = new Intent("com.ABOUT");
+			startActivity(i);
+			break;
+		case R.id.options:
+			Intent p = new Intent("com.OPTIONS");
+			startActivity(p);
+			break;
+		case R.id.exit:
+			finish();
+			break;
+		}
+		return false;
 	}
 }
