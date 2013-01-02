@@ -1,5 +1,7 @@
 package com.example.maps;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
@@ -170,7 +172,7 @@ public class MainActivity extends MapActivity implements View.OnClickListener {
 			mgr.hideSoftInputFromWindow(destAddress.getWindowToken(), 0);
 
 			// creates error alert screen
-			if (destAddress.getText().equals("")) {
+			if (destAddress.getText().toString().equals("")) {
 				AlertDialog.Builder adb = new AlertDialog.Builder(this);
 				adb.setTitle("Missing Address");
 				adb.setMessage("Please enter a valid Address");
@@ -187,6 +189,15 @@ public class MainActivity extends MapActivity implements View.OnClickListener {
 				alertDialog.show();
 
 			} else {
+				try {
+					saveAddress(destAddress.getText().toString());
+				} catch (FileNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				try {
 					Geocoder coder = new Geocoder(this);
 					List<Address> address;
@@ -258,5 +269,10 @@ public class MainActivity extends MapActivity implements View.OnClickListener {
 		double dist = earthRadius * c;
 
 		return dist;
+	}
+	private void saveAddress(String address) throws IOException{
+		FileOutputStream fos=openFileOutput("saved",Context.MODE_PRIVATE);
+		fos.write(address.getBytes());
+		fos.close();
 	}
 }

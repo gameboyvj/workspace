@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 import java.util.Vector;
 
@@ -37,31 +38,49 @@ public class Home extends Activity implements OnClickListener {
 	private ListView mainListView;
 
 	private ArrayAdapter<String> listAdapter;
-
+	Button b;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
+		// requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 		setContentView(R.layout.home);
-		getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.customtitle);
+		// getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE,
+		// R.layout.customtitle);
+		b=(Button)findViewById(R.id.button1);
+		b.setOnClickListener(this);
 		mainListView = (ListView) findViewById(R.id.listView1);
 		// LinearLayout layout = (LinearLayout)
 		// getWindow().findViewById(R.id.title_complex);
 		// layout.addView(new Button(this));
 		// layout.addView(new Button(this));
-		try {
-			loadEntries();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		String afterRead = "";
+		if (fileList().length == 0) {
+			try {
+				FileOutputStream fos = openFileOutput("saved",
+						Context.MODE_PRIVATE);
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else {
+			try {
+				loadEntries();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
 		}
 
+		/*
+		 * try { loadEntries(); } catch (FileNotFoundException e) { // TODO
+		 * Auto-generated catch block e.printStackTrace(); } catch (IOException
+		 * e) { // TODO Auto-generated catch block e.printStackTrace(); }
+		 */
 		// setListAdapter(new ArrayAdapter<String>(Home.this,
 		// android.R.layout.simple_list_item_1, searches));
+		
 	}
 
 	@Override
@@ -126,11 +145,15 @@ public class Home extends Activity implements OnClickListener {
 				searches.add(sc1.nextLine());
 				// )[i] = sc1.nextLine();
 			}
+
+			//String[] planets = new String[] { "Mercury", "Venus", "Earth",
+			//		"Mars", "Jupiter", "Saturn", "Uranus", "Neptune" };
+
+			//ArrayList<String> planetList = new ArrayList<String>();
+		//	planetList.addAll(Arrays.asList(planets));
 			listAdapter = new ArrayAdapter<String>(this, R.layout.simplerow, searches);
 			mainListView.setAdapter(listAdapter);
 			mainListView.setOnItemClickListener(new OnItemClickListener() {
-
-				// Log.i("m", "-"+pos);
 
 				@Override
 				public void onItemClick(AdapterView<?> arg0, View arg1,
@@ -138,12 +161,14 @@ public class Home extends Activity implements OnClickListener {
 					// TODO Auto-generated method stub
 					String location = searches.get(arg2);// [arg2];
 					Class ourClass = null;
+
 					try {
 						ourClass = Class.forName("com.example.maps.MainActivity");
 					} catch (ClassNotFoundException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
+
 					Bundle basket = new Bundle();
 					basket.putString("location", location);
 					Intent ourIntent = new Intent(Home.this, ourClass);
@@ -156,6 +181,7 @@ public class Home extends Activity implements OnClickListener {
 				}
 
 			});
+
 		}
 	}
 
@@ -176,7 +202,12 @@ public class Home extends Activity implements OnClickListener {
 	@Override
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
-
+		switch (v.getId()) {
+		case R.id.button1:
+			Intent i=new Intent("com.MAIN");
+			startActivity(i);
+			break;
+		}
 	}
 
 }

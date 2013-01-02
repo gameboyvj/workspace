@@ -20,16 +20,16 @@ public final class R {
         public static final int bEnd=0x7f080007;
         public static final int bStart=0x7f080003;
         public static final int bStop=0x7f080004;
+        public static final int button1=0x7f080009;
         public static final int etAddress=0x7f080002;
         public static final int exit=0x7f08000e;
         public static final int header=0x7f080006;
-        public static final int listView1=0x7f080009;
+        public static final int listView1=0x7f080008;
         public static final int menu_settings=0x7f08000b;
         public static final int mvMain=0x7f080005;
         public static final int options=0x7f08000d;
         public static final int rowTextView=0x7f08000a;
         public static final int textView1=0x7f080000;
-        public static final int title_complex=0x7f080008;
         public static final int tvlatlong=0x7f080001;
     }
     public static final class layout {
