@@ -3,11 +3,11 @@ package com.example.maps;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.LinkedList;
+
 import java.util.List;
 import java.util.Scanner;
 
-import org.w3c.dom.Node;
+
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -67,19 +67,24 @@ public class MainActivity extends MapActivity implements View.OnClickListener {
 		map = (MapView) findViewById(R.id.mvMain);
 		map.setBuiltInZoomControls(true);
 		// GooglePlayServicesUtil.getOpenSourceSoftwareLicenseInfo;
+		
+		//loads the basket from Home
 		try {
 			Bundle gotBasket = getIntent().getExtras();
 			gotLocation = gotBasket.getString("location");
 			afterRead = gotBasket.getString("afterreading");
+			//checks if this was a previous search or a new button press
+			//if it was old search, it immediately fills in the EditText with that address and presses Start for you
+			//kinda a cheap way to do it
+			//not sure if this works, editText never got filled in and never go to fully test it
 			if(!gotLocation.equals("")){
 				destAddress.setText(gotLocation);
 				start.performClick();
-				//loadNow(gotLocation);
 			}
-			// question.setText(gotBread);
 		}catch(NullPointerException e5){
 			e5.printStackTrace();
 		} finally {
+			//this stuff happens regardless of any errors, (love try/catch/finally)
 			latlong = (TextView) findViewById(R.id.tvlatlong);
 			destAddress = (EditText) findViewById(R.id.etAddress);
 			start = (Button) findViewById(R.id.bStart);
@@ -186,11 +191,12 @@ public class MainActivity extends MapActivity implements View.OnClickListener {
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.bStart:
+			
 			// hides keyboard after clicking Start
 			InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 			mgr.hideSoftInputFromWindow(destAddress.getWindowToken(), 0);
 
-			// creates error alert screen
+			// creates error alert screen if the person forgot to input an address (aka the text field is blank)
 			if (destAddress.getText().toString().equals("")) {
 				AlertDialog.Builder adb = new AlertDialog.Builder(this);
 				adb.setTitle("Missing Address");
@@ -208,6 +214,7 @@ public class MainActivity extends MapActivity implements View.OnClickListener {
 				alertDialog.show();
 
 			} else {
+				//otherwise runs the saveAddress function which will add this search to the save file
 				try {
 					saveAddress(destAddress.getText().toString());
 				} catch (FileNotFoundException e1) {
@@ -217,6 +224,8 @@ public class MainActivity extends MapActivity implements View.OnClickListener {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				
+				//main code that does the actual location checks
 				try {
 					Geocoder coder = new Geocoder(this);
 					List<Address> address;
@@ -299,23 +308,28 @@ public class MainActivity extends MapActivity implements View.OnClickListener {
 		return dist;
 	}
 
+	//code that saves the data, this was fun to write
 	private void saveAddress(String address) throws IOException {
-
+		
+		//creates a linked list
 		RefUnsortedList<String> savedList = new RefUnsortedList<String>();
+		//reads through that string that contains all previous addresses and adds them as nodes in the linked list
 		Scanner sc1 = new Scanner(afterRead);
 		while (sc1.hasNext()) {
 			String value = sc1.nextLine();
-			// searches.add(value);
-			savedList.add(value);
-			// )[i] = sc1.nextLine();
+				savedList.add(value);
 		}
+		//if the list already contains the address, it removes it from the list and adds it again to the front
+		//this helps when building the listview because the most recent search will always be at the top
 		if (savedList.contains(address)) {
 			savedList.remove(address);
 			savedList.add(address);
 		} else {
+			//just adds the address to the front otherwise
 			savedList.add(address);
 		}
-		//RefUnsortedList<String> list1=savedList;
+		
+		//traverses through the linked list and adds the data to the save file
 		LLNode<String> list1=savedList.list;
 		FileOutputStream fos = openFileOutput("saved", Context.MODE_APPEND);
 		while(list1!=null){
@@ -323,12 +337,7 @@ public class MainActivity extends MapActivity implements View.OnClickListener {
 			fos.write("\n".getBytes());
 			list1=list1.getLink();
 		}
-		
 		fos.close();
 	}
 	
-	private void loadNow(String address){
-		
-		
-	}
 }
