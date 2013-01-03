@@ -128,15 +128,26 @@ public class Home extends Activity implements OnClickListener {
 			while ((length = fis.read(buffer)) != -1) {
 				fileContent.append(new String(buffer));
 			}
+			fis.close();
 			afterRead = fileContent.toString();
 						
 			// builds searches arraylist and adds the location
 			Scanner sc1 = new Scanner(afterRead);
 			// int i = 0;
-			while (sc1.hasNext()) {
+			sc1.useDelimiter(System.getProperty("line.separator")); 
+			while (sc1.hasNextLine()) {
 				String value=sc1.nextLine();
-				if(!value.equals("\\n")){
-					searches.add(value);
+				
+					//if(!value.equals("\n")){
+						searches.add(value);
+					//}
+				
+			}
+			int arraysize=searches.size();
+			for(int i=0; i<arraysize; i++){
+				if(searches.get(i).equals("\n")){
+					searches.remove(i);
+					arraysize--;
 				}
 			}
 			//stuff for building listview

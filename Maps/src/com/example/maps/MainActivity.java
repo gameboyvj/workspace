@@ -79,10 +79,14 @@ public class MainActivity extends MapActivity implements View.OnClickListener {
 			//not sure if this works, editText never got filled in and never go to fully test it
 			if(!gotLocation.equals("")){
 				destAddress.setText(gotLocation);
+				saveAddress(gotLocation);
 				start.performClick();
 			}
 		}catch(NullPointerException e5){
 			e5.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} finally {
 			//this stuff happens regardless of any errors, (love try/catch/finally)
 			latlong = (TextView) findViewById(R.id.tvlatlong);
@@ -315,29 +319,33 @@ public class MainActivity extends MapActivity implements View.OnClickListener {
 		RefUnsortedList<String> savedList = new RefUnsortedList<String>();
 		//reads through that string that contains all previous addresses and adds them as nodes in the linked list
 		Scanner sc1 = new Scanner(afterRead);
-		while (sc1.hasNext()) {
+		sc1.useDelimiter(System.getProperty("line.separator")); 
+		while (sc1.hasNextLine()) {
 			String value = sc1.nextLine();
-				savedList.add(value);
+				savedList.addEnd(value);
 		}
 		//if the list already contains the address, it removes it from the list and adds it again to the front
 		//this helps when building the listview because the most recent search will always be at the top
-		if (savedList.contains(address)) {
+		//if (savedList.contains(address)) {
 			savedList.remove(address);
 			savedList.add(address);
-		} else {
+		//} else {
 			//just adds the address to the front otherwise
-			savedList.add(address);
-		}
-		
+		//	savedList.add(address);
+		//}
+		deleteFile("saved");
+		FileOutputStream fos = openFileOutput("saved", Context.MODE_PRIVATE);
+		fos.close();
 		//traverses through the linked list and adds the data to the save file
 		LLNode<String> list1=savedList.list;
-		FileOutputStream fos = openFileOutput("saved", Context.MODE_APPEND);
+		FileOutputStream fos1 = openFileOutput("saved", Context.MODE_APPEND);
 		while(list1!=null){
-			fos.write(list1.getInfo().getBytes());
-			fos.write("\n".getBytes());
+			fos1.write(list1.getInfo().getBytes());
+			fos1.write(System.getProperty("line.separator").getBytes());
+			//fos1.write("\n".getBytes());
 			list1=list1.getLink();
 		}
-		fos.close();
+		fos1.close();
 	}
 	
 }

@@ -22,6 +22,8 @@ public class RefUnsortedList<T> implements ListInterface<T>
   protected LLNode<T> location;   // node containing element, if found
   protected LLNode<T> previous;   // node preceeding location
 
+  protected LLNode<T> last;		  //last node in list
+  
   protected LLNode<T> list;       // first node on the list
 
   public RefUnsortedList()
@@ -29,6 +31,7 @@ public class RefUnsortedList<T> implements ListInterface<T>
     numElements = 0;
     list = null;
     currentPos = null;
+    last=list;
   }
 
   public void add(T element)
@@ -38,8 +41,25 @@ public class RefUnsortedList<T> implements ListInterface<T>
     newNode.setLink(list);
     list = newNode;
     numElements++;
+    if(numElements==1){
+    	last=list;
+    }
   }
-
+  
+  //adds the element to the end of the list
+  protected void addEnd(T element){
+	LLNode<T> newNode=new LLNode<T>(element);
+	if(numElements==0){
+		list=newNode;
+		last=list;
+	}else{
+		last.setLink(newNode);
+		last=newNode;
+	}
+	numElements++;
+	 
+	  
+  }
   protected void find(T target)
   // Searches list for an occurence of an element e such that
   // e.equals(target). If successful, sets instance variables
