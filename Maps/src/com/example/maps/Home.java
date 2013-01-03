@@ -34,9 +34,9 @@ import android.widget.AdapterView.OnItemClickListener;
 public class Home extends Activity implements OnClickListener {
 
 	ArrayList<String> searches = new ArrayList<String>();
-
+	RefUnsortedList<String> savedList=new RefUnsortedList<String>();
 	private ListView mainListView;
-
+	String finalfinalread="";
 	private ArrayAdapter<String> listAdapter;
 	Button b;
 	@Override
@@ -142,7 +142,9 @@ public class Home extends Activity implements OnClickListener {
 			Scanner sc1 = new Scanner(afterRead);
 			// int i = 0;
 			while (sc1.hasNext()) {
-				searches.add(sc1.nextLine());
+				String value=sc1.nextLine();
+				searches.add(value);
+			//	savedList.add(value);
 				// )[i] = sc1.nextLine();
 			}
 
@@ -152,6 +154,8 @@ public class Home extends Activity implements OnClickListener {
 			//ArrayList<String> planetList = new ArrayList<String>();
 		//	planetList.addAll(Arrays.asList(planets));
 			listAdapter = new ArrayAdapter<String>(this, R.layout.simplerow, searches);
+			final String finalread=afterRead;
+			finalfinalread=afterRead;
 			mainListView.setAdapter(listAdapter);
 			mainListView.setOnItemClickListener(new OnItemClickListener() {
 
@@ -168,11 +172,13 @@ public class Home extends Activity implements OnClickListener {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-
+					//String test=afterRead;
 					Bundle basket = new Bundle();
 					basket.putString("location", location);
+					basket.putString("afterreading", finalread);
 					Intent ourIntent = new Intent(Home.this, ourClass);
 					ourIntent.putExtras(basket);
+					//ourIntent.putExtra("savedList", savedList);
 					startActivity(ourIntent);
 
 					// myIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -205,6 +211,10 @@ public class Home extends Activity implements OnClickListener {
 		switch (v.getId()) {
 		case R.id.button1:
 			Intent i=new Intent("com.MAIN");
+			Bundle basket = new Bundle();
+			basket.putString("location", "");
+			basket.putString("afterreading", finalfinalread);
+			i.putExtras(basket);
 			startActivity(i);
 			break;
 		}

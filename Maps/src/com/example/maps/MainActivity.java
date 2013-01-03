@@ -3,7 +3,11 @@ package com.example.maps;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Scanner;
+
+import org.w3c.dom.Node;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -52,6 +56,8 @@ public class MainActivity extends MapActivity implements View.OnClickListener {
 	double destLat = 0;
 	double destLong = 0;
 	Vibrator vibrate;
+	String gotLocation = "";
+	String afterRead = "";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -61,34 +67,47 @@ public class MainActivity extends MapActivity implements View.OnClickListener {
 		map = (MapView) findViewById(R.id.mvMain);
 		map.setBuiltInZoomControls(true);
 		// GooglePlayServicesUtil.getOpenSourceSoftwareLicenseInfo;
+		try {
+			Bundle gotBasket = getIntent().getExtras();
+			gotLocation = gotBasket.getString("location");
+			afterRead = gotBasket.getString("afterreading");
+			if(!gotLocation.equals("")){
+				destAddress.setText(gotLocation);
+				start.performClick();
+				//loadNow(gotLocation);
+			}
+			// question.setText(gotBread);
+		}catch(NullPointerException e5){
+			e5.printStackTrace();
+		} finally {
+			latlong = (TextView) findViewById(R.id.tvlatlong);
+			destAddress = (EditText) findViewById(R.id.etAddress);
+			start = (Button) findViewById(R.id.bStart);
+			stop = (Button) findViewById(R.id.bStop);
+			start.setOnClickListener(this);
+			stop.setOnClickListener(this);
 
-		latlong = (TextView) findViewById(R.id.tvlatlong);
-		destAddress = (EditText) findViewById(R.id.etAddress);
-		start = (Button) findViewById(R.id.bStart);
-		stop = (Button) findViewById(R.id.bStop);
-		start.setOnClickListener(this);
-		stop.setOnClickListener(this);
+			// //////////////////////
+			mc = map.getController();
 
-		// //////////////////////
-		mc = map.getController();
+			// String coordinates[] = {"36.487303","-94.308493"};
 
-		// String coordinates[] = {"36.487303","-94.308493"};
+			// double lat = Double.parseDouble(coordinates[0]);
+			// double lng = Double.parseDouble(coordinates[1]);
 
-		// double lat = Double.parseDouble(coordinates[0]);
-		// double lng = Double.parseDouble(coordinates[1]);
+			// GeoPoint p = new GeoPoint( //represents a geographical location
+			// (int) (lat * 1E6),
+			// (int) (lng * 1E6));
 
-		// GeoPoint p = new GeoPoint( //represents a geographical location
-		// (int) (lat * 1E6),
-		// (int) (lng * 1E6));
+			// mc.animateTo(p); //map goes to the coordinates
+			// mc.setZoom(17); //set your zoom level
+			// map.invalidate();
+			// ////////////////////
 
-		// mc.animateTo(p); //map goes to the coordinates
-		// mc.setZoom(17); //set your zoom level
-		// map.invalidate();
-		// ////////////////////
-
-		// Touchy t = new Touchy();
-		// List<Overlay> overlayList = map.getOverlays();
-		// overlayList.add(t);
+			// Touchy t = new Touchy();
+			// List<Overlay> overlayList = map.getOverlays();
+			// overlayList.add(t);
+		}
 	}
 
 	@Override
@@ -239,12 +258,21 @@ public class MainActivity extends MapActivity implements View.OnClickListener {
 																	// below
 					SharedPreferences getPrefs = PreferenceManager
 							.getDefaultSharedPreferences(getBaseContext());
-					long interval = getPrefs.getLong("updateInterval", 1); //gets value for gps update interval, defaults to 1
+					long interval = getPrefs.getLong("updateInterval", 1); // gets
+																			// value
+																			// for
+																			// gps
+																			// update
+																			// interval,
+																			// defaults
+																			// to
+																			// 1
 					lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-							 interval * 60 * 1000, 0, locationListener); // updates your
-																	// location
-																	// every 1
-																	// min
+							interval * 60 * 1000, 0, locationListener); // updates
+																		// your
+					// location
+					// every 1
+					// min
 				}
 				break;
 				/*
@@ -270,9 +298,39 @@ public class MainActivity extends MapActivity implements View.OnClickListener {
 
 		return dist;
 	}
-	private void saveAddress(String address) throws IOException{
-		FileOutputStream fos=openFileOutput("saved",Context.MODE_PRIVATE);
-		fos.write(address.getBytes());
+
+	private void saveAddress(String address) throws IOException {
+
+		RefUnsortedList<String> savedList = new RefUnsortedList<String>();
+		Scanner sc1 = new Scanner(afterRead);
+		while (sc1.hasNext()) {
+			String value = sc1.nextLine();
+			// searches.add(value);
+			savedList.add(value);
+			// )[i] = sc1.nextLine();
+		}
+		if (savedList.contains(address)) {
+			savedList.remove(address);
+			savedList.add(address);
+		} else {
+			savedList.add(address);
+		}
+		//RefUnsortedList<String> list1=savedList;
+		LLNode<String> list1=savedList.list;
+		FileOutputStream fos = openFileOutput("saved", Context.MODE_APPEND);
+		while(list1!=null){
+			fos.write(list1.getInfo().getBytes());
+			fos.write("\n".getBytes());
+			list1=list1.getLink();
+		}
+		//FileOutputStream fos = openFileOutput("saved", Context.MODE_APPEND);
+		//fos.write(address.getBytes());
+		//fos.write("/n".getBytes());
 		fos.close();
+	}
+	
+	private void loadNow(String address){
+		
+		
 	}
 }
