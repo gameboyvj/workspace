@@ -323,9 +323,7 @@ public class MainActivity extends MapActivity implements View.OnClickListener {
 			fos.write("\n".getBytes());
 			list1=list1.getLink();
 		}
-		//FileOutputStream fos = openFileOutput("saved", Context.MODE_APPEND);
-		//fos.write(address.getBytes());
-		//fos.write("/n".getBytes());
+		
 		fos.close();
 	}
 	

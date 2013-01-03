@@ -39,9 +39,9 @@ public class Home extends Activity implements OnClickListener {
 	String finalfinalread="";
 	private ArrayAdapter<String> listAdapter;
 	Button b;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		// requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 		setContentView(R.layout.home);
@@ -55,7 +55,10 @@ public class Home extends Activity implements OnClickListener {
 		// layout.addView(new Button(this));
 		// layout.addView(new Button(this));
 		String afterRead = "";
+		
+		//checks if there are any save files
 		if (fileList().length == 0) {
+			//creates a new save file called "saved"
 			try {
 				FileOutputStream fos = openFileOutput("saved",
 						Context.MODE_PRIVATE);
@@ -64,6 +67,7 @@ public class Home extends Activity implements OnClickListener {
 				e.printStackTrace();
 			}
 		} else {
+			//if a save file already exists, it goes to load the file and fill in the listView
 			try {
 				loadEntries();
 			} catch (IOException e) {
@@ -71,16 +75,7 @@ public class Home extends Activity implements OnClickListener {
 				e.printStackTrace();
 			}
 
-		}
-
-		/*
-		 * try { loadEntries(); } catch (FileNotFoundException e) { // TODO
-		 * Auto-generated catch block e.printStackTrace(); } catch (IOException
-		 * e) { // TODO Auto-generated catch block e.printStackTrace(); }
-		 */
-		// setListAdapter(new ArrayAdapter<String>(Home.this,
-		// android.R.layout.simple_list_item_1, searches));
-		
+		}	
 	}
 
 	@Override
@@ -110,8 +105,10 @@ public class Home extends Activity implements OnClickListener {
 		}
 		return false;
 	}
-
+	
+	//does all the reading, conversion from bytes to string and fills the ListView with it
 	protected void loadEntries() throws IOException {
+		//Some redundancy here due to copy pasting, everything still works tho
 		FileOutputStream fos;
 		String afterRead = "";
 		// checks if any files exist, if they don't, it creates one called
@@ -119,44 +116,35 @@ public class Home extends Activity implements OnClickListener {
 		if (fileList().length == 0) {
 			fos = openFileOutput("saved", Context.MODE_PRIVATE);
 		} else {
-			// reads through saved and builds a string out of it
+			// reads through "saved" and builds a string out of it
 			FileInputStream fis = openFileInput("saved");
 			int ch;
 			StringBuffer fileContent = new StringBuffer("");
 			byte[] buffer = new byte[1024];
 			int length;
+			
+			//some magic i got from stackOverflow
+			//reads the bytes from "saved" and converts to 1 string
 			while ((length = fis.read(buffer)) != -1) {
 				fileContent.append(new String(buffer));
 			}
 			afterRead = fileContent.toString();
-			// reads through the built string for the number of new lines
-			// Scanner sc = new Scanner(afterRead);
-			// int count = 0;
-			// while (sc.hasNext()) {
-			// if (sc.next().equals("/n")) {
-			// count++;
-			// }
-			// }
-			// builds searches array and adds the locations
-			// searches = new String[count];
+						
+			// builds searches arraylist and adds the location
 			Scanner sc1 = new Scanner(afterRead);
 			// int i = 0;
 			while (sc1.hasNext()) {
 				String value=sc1.nextLine();
-				searches.add(value);
-			//	savedList.add(value);
-				// )[i] = sc1.nextLine();
+				if(!value.equals("\\n")){
+					searches.add(value);
+				}
 			}
-
-			//String[] planets = new String[] { "Mercury", "Venus", "Earth",
-			//		"Mars", "Jupiter", "Saturn", "Uranus", "Neptune" };
-
-			//ArrayList<String> planetList = new ArrayList<String>();
-		//	planetList.addAll(Arrays.asList(planets));
+			//stuff for building listview
 			listAdapter = new ArrayAdapter<String>(this, R.layout.simplerow, searches);
 			final String finalread=afterRead;
 			finalfinalread=afterRead;
 			mainListView.setAdapter(listAdapter);
+			//sets up onclicklistener for the listview
 			mainListView.setOnItemClickListener(new OnItemClickListener() {
 
 				@Override
@@ -165,51 +153,37 @@ public class Home extends Activity implements OnClickListener {
 					// TODO Auto-generated method stub
 					String location = searches.get(arg2);// [arg2];
 					Class ourClass = null;
-
+					//always goes to MainActivity
 					try {
 						ourClass = Class.forName("com.example.maps.MainActivity");
 					} catch (ClassNotFoundException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					//String test=afterRead;
+					
+					//builds basket that contains the location and the string containing previous searches
 					Bundle basket = new Bundle();
 					basket.putString("location", location);
 					basket.putString("afterreading", finalread);
+					//builds intent, adds the basket and starts activity
 					Intent ourIntent = new Intent(Home.this, ourClass);
 					ourIntent.putExtras(basket);
-					//ourIntent.putExtra("savedList", savedList);
 					startActivity(ourIntent);
 
-					// myIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-					// myIntent.putExtra("pos", pos);
-					// startActivity(myIntent);
-				}
+					}
 
 			});
 
 		}
 	}
 
-	/*
-	 * @Override protected void onListItemClick(ListView l, View v, int
-	 * position, long id) { // TODO Auto-generated method stub
-	 * super.onListItemClick(l, v, position, id);
-	 * 
-	 * String location = searches[position]; try { Class ourClass
-	 * =Class.forName("com.example.maps.MainActivity"); Bundle basket=new
-	 * Bundle(); basket.putString("location", location); Intent ourIntent = new
-	 * Intent(Home.this, ourClass); ourIntent.putExtras(basket);
-	 * startActivity(ourIntent);
-	 * 
-	 * } catch(ClassNotFoundException e) { e.printStackTrace(); } }
-	 */
-
+	//this will be the New button where you can put in a new search rather than use an older one
 	@Override
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
 		switch (v.getId()) {
 		case R.id.button1:
+			//basically the same as before but sends an empty string for the address and sends the string containing all previous searches
 			Intent i=new Intent("com.MAIN");
 			Bundle basket = new Bundle();
 			basket.putString("location", "");
@@ -219,5 +193,4 @@ public class Home extends Activity implements OnClickListener {
 			break;
 		}
 	}
-
 }
