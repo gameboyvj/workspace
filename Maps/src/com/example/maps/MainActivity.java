@@ -319,7 +319,7 @@ public class MainActivity extends MapActivity implements View.OnClickListener {
 		//creates a linked list
 		RefUnsortedList<String> savedList = new RefUnsortedList<String>();
 		//reads through that string that contains all previous addresses and adds them as nodes in the linked list
-		Log.v("(Main) AfterRead", afterRead);
+		//Log.v("(Main) AfterRead", afterRead);
 		Scanner sc1 = new Scanner(afterRead);
 		sc1.useDelimiter(System.getProperty("line.separator")); 
 		while (sc1.hasNextLine()) {
@@ -344,7 +344,7 @@ public class MainActivity extends MapActivity implements View.OnClickListener {
 		while(list1!=null){
 			fos1.write(list1.getInfo().getBytes());
 			fos1.write(System.getProperty("line.separator").getBytes());
-			Log.v("LinkedList", list1.getInfo());
+			//Log.v("LinkedList", list1.getInfo());
 			//fos1.write("\n".getBytes());
 			list1=list1.getLink();
 		}

@@ -1,9 +1,11 @@
 package com.example.maps;
 
+import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
@@ -58,16 +60,16 @@ public class Home extends Activity implements OnClickListener {
 		String afterRead = "";
 		
 		//checks if there are any save files
-		if (fileList().length == 0) {
+		//if (fileList().length == 0) {
 			//creates a new save file called "saved"
-			try {
-				FileOutputStream fos = openFileOutput("saved",
-						Context.MODE_PRIVATE);
-			} catch (FileNotFoundException e) {
+			//try {
+			//	FileOutputStream fos = openFileOutput("saved", Context.MODE_PRIVATE);
+			//	fos.close();
+		//	} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		} else {
+		//		e.printStackTrace();
+		//	}
+		//} else {
 			//if a save file already exists, it goes to load the file and fill in the listView
 			try {
 				loadEntries();
@@ -76,7 +78,7 @@ public class Home extends Activity implements OnClickListener {
 				e.printStackTrace();
 			}
 
-		}	
+		//}	
 	}
 
 	@Override
@@ -116,23 +118,36 @@ public class Home extends Activity implements OnClickListener {
 		// "saved"
 		if (fileList().length == 0) {
 			fos = openFileOutput("saved", Context.MODE_PRIVATE);
+			fos.close();
 		} else {
 			// reads through "saved" and builds a string out of it
 			FileInputStream fis = openFileInput("saved");
 			//int ch;
 			StringBuffer fileContent = new StringBuffer("");
-			byte[] buffer = new byte[1024];
-			int length;
+			StringBuffer buffer=new StringBuffer();
+			BufferedReader reader = new BufferedReader(new InputStreamReader(fis));
+			String line;
+			if (fis!=null) {                            
+		        while ((line = reader.readLine()) != null) {    
+		            buffer.append(line + "\n" );
+		        }               
+		    }       
+			fis.close();
+			afterRead=buffer.toString();
+			
+			
+			//byte[] buffer = new byte[1024];
+			//int length;
 			
 			//some magic i got from stackOverflow
 			//reads the bytes from "saved" and converts to 1 string
-			while ((length = fis.read(buffer)) != -1) {
-				fileContent.append(new String(buffer));
-			}
-			fis.close();
-			afterRead = fileContent.toString();
+			//while ((length = fis.read(buffer)) != -1) {
+			//	fileContent.append(new String(buffer));
+			//}
+			//fis.close();
+			//afterRead = fileContent.toString();
 					
-			Log.v("AfterRead String (Home)", afterRead);
+			//Log.v("AfterRead String (Home)", afterRead);
 			// builds searches arraylist and adds the location
 			Scanner sc1 = new Scanner(afterRead);
 			// int i = 0;
@@ -152,10 +167,10 @@ public class Home extends Activity implements OnClickListener {
 					arraysize--;
 				}
 			}
-			for(int j=0; j<(searches.size()-1); j++){
-				Log.v("Searches Arraylist", searches.get(j));
+			//for(int j=0; j<(searches.size()-1); j++){
+			//	Log.v("Searches Arraylist", searches.get(j));
 				//System.out.print(searches.get(j).toString());
-			}
+			//}
 			//stuff for building listview
 			listAdapter = new ArrayAdapter<String>(this, R.layout.simplerow, searches);
 			final String finalread=afterRead;
