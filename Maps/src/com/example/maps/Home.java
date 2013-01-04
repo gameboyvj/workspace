@@ -15,6 +15,7 @@ import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -118,7 +119,7 @@ public class Home extends Activity implements OnClickListener {
 		} else {
 			// reads through "saved" and builds a string out of it
 			FileInputStream fis = openFileInput("saved");
-			int ch;
+			//int ch;
 			StringBuffer fileContent = new StringBuffer("");
 			byte[] buffer = new byte[1024];
 			int length;
@@ -130,7 +131,8 @@ public class Home extends Activity implements OnClickListener {
 			}
 			fis.close();
 			afterRead = fileContent.toString();
-						
+					
+			Log.v("AfterRead String (Home)", afterRead);
 			// builds searches arraylist and adds the location
 			Scanner sc1 = new Scanner(afterRead);
 			// int i = 0;
@@ -143,12 +145,16 @@ public class Home extends Activity implements OnClickListener {
 					//}
 				
 			}
-			int arraysize=searches.size();
+			int arraysize=searches.size()-1;
 			for(int i=0; i<arraysize; i++){
 				if(searches.get(i).equals("\n")){
 					searches.remove(i);
 					arraysize--;
 				}
+			}
+			for(int j=0; j<(searches.size()-1); j++){
+				Log.v("Searches Arraylist", searches.get(j));
+				//System.out.print(searches.get(j).toString());
 			}
 			//stuff for building listview
 			listAdapter = new ArrayAdapter<String>(this, R.layout.simplerow, searches);
@@ -180,7 +186,6 @@ public class Home extends Activity implements OnClickListener {
 					Intent ourIntent = new Intent(Home.this, ourClass);
 					ourIntent.putExtras(basket);
 					startActivity(ourIntent);
-
 					}
 
 			});

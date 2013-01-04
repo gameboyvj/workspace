@@ -57,9 +57,8 @@ public class RefUnsortedList<T> implements ListInterface<T>
 		last=newNode;
 	}
 	numElements++;
-	 
-	  
   }
+  
   protected void find(T target)
   // Searches list for an occurence of an element e such that
   // e.equals(target). If successful, sets instance variables
