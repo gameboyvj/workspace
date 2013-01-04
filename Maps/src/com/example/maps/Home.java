@@ -127,7 +127,6 @@ public class Home extends Activity implements OnClickListener {
 			mainListView.setAdapter(listAdapter);
 			mainListView.setOnItemClickListener(new OnItemClickListener() {
 
-				@Override
 				public void onItemClick(AdapterView<?> arg0, View arg1,
 						int arg2, long arg3) {
 					// TODO Auto-generated method stub
@@ -214,7 +213,6 @@ public class Home extends Activity implements OnClickListener {
 			//sets up onclicklistener for the listview
 			mainListView.setOnItemClickListener(new OnItemClickListener() {
 
-				@Override
 				public void onItemClick(AdapterView<?> arg0, View arg1,
 						int arg2, long arg3) {
 					// TODO Auto-generated method stub
@@ -244,7 +242,6 @@ public class Home extends Activity implements OnClickListener {
 	}
 
 	//this will be the New button where you can put in a new search rather than use an older one
-	@Override
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
 		switch (v.getId()) {

@@ -165,3 +165,4 @@ pip-log.txt
 ################ignoring everything but xml and java files
 The New Boston/
 randomDo/
+Maps/gen/com/example/maps/R.java
