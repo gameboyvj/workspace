@@ -119,6 +119,41 @@ public class Home extends Activity implements OnClickListener {
 		if (fileList().length == 0) {
 			fos = openFileOutput("saved", Context.MODE_PRIVATE);
 			fos.close();
+			
+			//Sets up listView with a new alarm option
+			ArrayList<String> searches=new ArrayList<String>();
+			searches.add("Set Up New Alarm");
+			listAdapter = new ArrayAdapter<String>(this, R.layout.simplerow, searches);
+			mainListView.setAdapter(listAdapter);
+			mainListView.setOnItemClickListener(new OnItemClickListener() {
+
+				@Override
+				public void onItemClick(AdapterView<?> arg0, View arg1,
+						int arg2, long arg3) {
+					// TODO Auto-generated method stub
+					//String location = searches.get(arg2);// [arg2];
+					Class ourClass = null;
+					//always goes to MainActivity
+					try {
+						ourClass = Class.forName("com.example.maps.MainActivity");
+					} catch (ClassNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+					//builds basket that contains the location and the string containing previous searches
+					Bundle basket = new Bundle();
+					basket.putString("location", "");
+					basket.putString("afterreading", finalfinalread);
+					//builds intent, adds the basket and starts activity
+					Intent ourIntent = new Intent(Home.this, ourClass);
+					ourIntent.putExtras(basket);
+					startActivity(ourIntent);
+					}
+
+			});
+
+			
 		} else {
 			// reads through "saved" and builds a string out of it
 			FileInputStream fis = openFileInput("saved");
