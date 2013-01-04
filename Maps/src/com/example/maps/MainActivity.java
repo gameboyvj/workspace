@@ -295,9 +295,10 @@ public class MainActivity extends MapActivity implements View.OnClickListener {
 			break;
 
 		case R.id.bStop:
-			vibrate.cancel(); // should stop vibration on stop button
+			//vibrate.cancel(); // should stop vibration on stop button
 			lm.removeUpdates(locationListener); // should stop gps updates of //
 												// locationListener
+			finish();
 			break;
 		}
 	}
