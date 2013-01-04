@@ -7,8 +7,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
 
-
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -68,38 +66,41 @@ public class MainActivity extends MapActivity implements View.OnClickListener {
 		map = (MapView) findViewById(R.id.mvMain);
 		map.setBuiltInZoomControls(true);
 		// GooglePlayServicesUtil.getOpenSourceSoftwareLicenseInfo;
-		
-		//loads the basket from Home
+
+		latlong = (TextView) findViewById(R.id.tvlatlong);
+		destAddress = (EditText) findViewById(R.id.etAddress);
+		start = (Button) findViewById(R.id.bStart);
+		stop = (Button) findViewById(R.id.bStop);
+		start.setOnClickListener(this);
+		stop.setOnClickListener(this);
+		mc = map.getController();
+		// loads the basket from Home
 		try {
 			Bundle gotBasket = getIntent().getExtras();
 			gotLocation = gotBasket.getString("location");
 			afterRead = gotBasket.getString("afterreading");
-			//checks if this was a previous search or a new button press
-			//if it was old search, it immediately fills in the EditText with that address and presses Start for you
-			//kinda a cheap way to do it
-			//not sure if this works, editText never got filled in and never go to fully test it
-			if(!gotLocation.equals("")){
+			// checks if this was a previous search or a new button press
+			// if it was old search, it immediately fills in the EditText with
+			// that address and presses Start for you
+			// kinda a cheap way to do it
+			// not sure if this works, editText never got filled in and never go
+			// to fully test it
+			if (!gotLocation.equals("")) {
 				destAddress.setText(gotLocation);
 				saveAddress(gotLocation);
 				start.performClick();
 			}
-		}catch(NullPointerException e5){
+		} catch (NullPointerException e5) {
 			e5.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
-			//this stuff happens regardless of any errors, (love try/catch/finally)
-			latlong = (TextView) findViewById(R.id.tvlatlong);
-			destAddress = (EditText) findViewById(R.id.etAddress);
-			start = (Button) findViewById(R.id.bStart);
-			stop = (Button) findViewById(R.id.bStop);
-			start.setOnClickListener(this);
-			stop.setOnClickListener(this);
+			// this stuff happens regardless of any errors, (love
+			// try/catch/finally)
 
 			// //////////////////////
-			mc = map.getController();
-
+			
 			// String coordinates[] = {"36.487303","-94.308493"};
 
 			// double lat = Double.parseDouble(coordinates[0]);
@@ -196,12 +197,13 @@ public class MainActivity extends MapActivity implements View.OnClickListener {
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.bStart:
-			
+
 			// hides keyboard after clicking Start
 			InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 			mgr.hideSoftInputFromWindow(destAddress.getWindowToken(), 0);
 
-			// creates error alert screen if the person forgot to input an address (aka the text field is blank)
+			// creates error alert screen if the person forgot to input an
+			// address (aka the text field is blank)
 			if (destAddress.getText().toString().equals("")) {
 				AlertDialog.Builder adb = new AlertDialog.Builder(this);
 				adb.setTitle("Missing Address");
@@ -219,7 +221,8 @@ public class MainActivity extends MapActivity implements View.OnClickListener {
 				alertDialog.show();
 
 			} else {
-				//otherwise runs the saveAddress function which will add this search to the save file
+				// otherwise runs the saveAddress function which will add this
+				// search to the save file
 				try {
 					saveAddress(destAddress.getText().toString());
 				} catch (FileNotFoundException e1) {
@@ -229,8 +232,8 @@ public class MainActivity extends MapActivity implements View.OnClickListener {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
-				//main code that does the actual location checks
+
+				// main code that does the actual location checks
 				try {
 					Geocoder coder = new Geocoder(this);
 					List<Address> address;
@@ -288,13 +291,14 @@ public class MainActivity extends MapActivity implements View.OnClickListener {
 					// every 1
 					// min
 				}
-				break;
-				/*
-				 * case R.id.bStop: vibrate.cancel(); // should stop vibration
-				 * on stop button lm.removeUpdates(locationListener); // should
-				 * stop gps updates of // locationListener break;
-				 */
 			}
+			break;
+
+		case R.id.bStop:
+			vibrate.cancel(); // should stop vibration on stop button
+			lm.removeUpdates(locationListener); // should stop gps updates of //
+												// locationListener
+			break;
 		}
 	}
 
@@ -313,42 +317,45 @@ public class MainActivity extends MapActivity implements View.OnClickListener {
 		return dist;
 	}
 
-	//code that saves the data, this was fun to write
+	// code that saves the data, this was fun to write
 	private void saveAddress(String address) throws IOException {
-		
-		//creates a linked list
+
+		// creates a linked list
 		RefUnsortedList<String> savedList = new RefUnsortedList<String>();
-		//reads through that string that contains all previous addresses and adds them as nodes in the linked list
-		//Log.v("(Main) AfterRead", afterRead);
+		// reads through that string that contains all previous addresses and
+		// adds them as nodes in the linked list
+		// Log.v("(Main) AfterRead", afterRead);
 		Scanner sc1 = new Scanner(afterRead);
-		sc1.useDelimiter(System.getProperty("line.separator")); 
+		sc1.useDelimiter(System.getProperty("line.separator"));
 		while (sc1.hasNextLine()) {
 			String value = sc1.nextLine();
-				savedList.addEnd(value);
+			savedList.addEnd(value);
 		}
-		//if the list already contains the address, it removes it from the list and adds it again to the front
-		//this helps when building the listview because the most recent search will always be at the top
-		//if (savedList.contains(address)) {
-			savedList.remove(address);
-			savedList.add(address);
-		//} else {
-			//just adds the address to the front otherwise
-		//	savedList.add(address);
-		//}
+		// if the list already contains the address, it removes it from the list
+		// and adds it again to the front
+		// this helps when building the listview because the most recent search
+		// will always be at the top
+		// if (savedList.contains(address)) {
+		savedList.remove(address);
+		savedList.add(address);
+		// } else {
+		// just adds the address to the front otherwise
+		// savedList.add(address);
+		// }
 		deleteFile("saved");
 		FileOutputStream fos = openFileOutput("saved", Context.MODE_PRIVATE);
 		fos.close();
-		//traverses through the linked list and adds the data to the save file
-		LLNode<String> list1=savedList.list;
+		// traverses through the linked list and adds the data to the save file
+		LLNode<String> list1 = savedList.list;
 		FileOutputStream fos1 = openFileOutput("saved", Context.MODE_APPEND);
-		while(list1!=null){
+		while (list1 != null) {
 			fos1.write(list1.getInfo().getBytes());
 			fos1.write(System.getProperty("line.separator").getBytes());
-			//Log.v("LinkedList", list1.getInfo());
-			//fos1.write("\n".getBytes());
-			list1=list1.getLink();
+			// Log.v("LinkedList", list1.getInfo());
+			// fos1.write("\n".getBytes());
+			list1 = list1.getLink();
 		}
 		fos1.close();
 	}
-	
+
 }
