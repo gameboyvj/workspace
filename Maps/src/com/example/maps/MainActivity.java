@@ -57,6 +57,7 @@ public class MainActivity extends MapActivity implements View.OnClickListener {
 	Vibrator vibrate;
 	String gotLocation = "";
 	String afterRead = "";
+	double totalDist=0;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -145,6 +146,7 @@ public class MainActivity extends MapActivity implements View.OnClickListener {
 				double currentLong = loc.getLongitude();
 				double dist = distance(destLat, destLong, currentLat,
 						currentLong);
+				
 				latlong.setText("Distance to destination: "
 						+ String.valueOf(dist));
 
@@ -243,7 +245,9 @@ public class MainActivity extends MapActivity implements View.OnClickListener {
 					Address location = address.get(0);
 					destLat = location.getLatitude();
 					destLong = location.getLongitude();
-
+					//double dist=distance(destLat, destLong, currentLat,
+					//	currentLong);
+					//totalDist=dist;
 					GeoPoint p1 = new GeoPoint(
 							(int) (location.getLatitude() * 1E6),
 							(int) (location.getLongitude() * 1E6));
@@ -359,4 +363,21 @@ public class MainActivity extends MapActivity implements View.OnClickListener {
 		fos1.close();
 	}
 
+
+
+	public int intervalTime(){
+		
+		if(totalDist>100){
+			return 20;
+		}else if(totalDist>50){
+			return 15;
+		}else if(totalDist>30){
+			return 7;
+		}else if(totalDist>10){
+			return 5;
+		}else{
+			return 1;
+		}
+		
+	}
 }
