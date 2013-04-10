@@ -151,6 +151,7 @@ public class MainActivity extends MapActivity implements View.OnClickListener {
 						+ String.valueOf(dist));
 
 				if (dist <= 1) {
+					lm.removeUpdates(locationListener);
 					Intent goEndPoint = new Intent("com.ENDPOINT");
 					startActivity(goEndPoint);
 					/*
@@ -237,12 +238,14 @@ public class MainActivity extends MapActivity implements View.OnClickListener {
 
 				// main code that does the actual location checks
 				try {
+					
 					Geocoder coder = new Geocoder(this);
 					List<Address> address;
 					// test
 					address = coder.getFromLocationName(destAddress.getText()
 							.toString(), 5);
 					Address location = address.get(0);
+					
 					destLat = location.getLatitude();
 					destLong = location.getLongitude();
 					//double dist=distance(destLat, destLong, currentLat,

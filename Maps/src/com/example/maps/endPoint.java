@@ -51,5 +51,10 @@ public class endPoint extends Activity implements OnClickListener {
 		finish();
 
 	}
+	
+	//disables back button
+	@Override
+	public void onBackPressed() {
+	}
 
 }
