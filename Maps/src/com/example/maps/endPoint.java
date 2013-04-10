@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -56,5 +57,28 @@ public class endPoint extends Activity implements OnClickListener {
 	@Override
 	public void onBackPressed() {
 	}
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		vibrate.cancel();
+		finish();
+	}
+	/*
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+	    // TODO Auto-generated method stub
+	    if (event.getAction() == KeyEvent.ACTION_DOWN) {
+	        switch (keyCode) {
+	        case KeyEvent.KEYCODE_HOME:
+	        	vibrate.cancel();
+	            finish();
+	            return true;
+	        }
+	    }
+
+	    return super.onKeyDown(keyCode, event);
+	}
+	*/
 
 }
