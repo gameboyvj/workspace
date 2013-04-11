@@ -3,7 +3,6 @@ package com.example.maps;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
 import java.util.List;
 import java.util.Scanner;
 
@@ -17,15 +16,17 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapController;
@@ -57,7 +58,7 @@ public class MainActivity extends MapActivity implements View.OnClickListener {
 	Vibrator vibrate;
 	String gotLocation = "";
 	String afterRead = "";
-	double totalDist=0;
+	double totalDist = 0;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -75,50 +76,72 @@ public class MainActivity extends MapActivity implements View.OnClickListener {
 		start.setOnClickListener(this);
 		stop.setOnClickListener(this);
 		mc = map.getController();
-		// loads the basket from Home
-		try {
-			Bundle gotBasket = getIntent().getExtras();
-			gotLocation = gotBasket.getString("location");
-			afterRead = gotBasket.getString("afterreading");
-			// checks if this was a previous search or a new button press
-			// if it was old search, it immediately fills in the EditText with
-			// that address and presses Start for you
-			// kinda a cheap way to do it
-			// not sure if this works, editText never got filled in and never go
-			// to fully test it
-			if (!gotLocation.equals("")) {
-				destAddress.setText(gotLocation);
-				saveAddress(gotLocation);
-				start.performClick();
+		if (!netCheckin()) {
+			AlertDialog.Builder adb1 = new AlertDialog.Builder(this);
+			adb1.setTitle("Network Error");
+			adb1.setMessage("Network Connection Required. Please check settings");
+			adb1.setPositiveButton("Settings",
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int id) {
+							finish();
+							startActivity(new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS));
+							dialog.cancel();
+						}
+					});
+			// create alert dialog
+			AlertDialog alertDialog1 = adb1.create();
+
+			// show it
+			alertDialog1.show();
+		} else {
+			// loads the basket from Home
+			try {
+				Bundle gotBasket = getIntent().getExtras();
+				gotLocation = gotBasket.getString("location");
+				afterRead = gotBasket.getString("afterreading");
+				// checks if this was a previous search or a new button press
+				// if it was old search, it immediately fills in the EditText
+				// with
+				// that address and presses Start for you
+				// kinda a cheap way to do it
+				// not sure if this works, editText never got filled in and
+				// never go
+				// to fully test it
+				if (!gotLocation.equals("")) {
+					destAddress.setText(gotLocation);
+					saveAddress(gotLocation);
+					start.performClick();
+				}
+			} catch (NullPointerException e5) {
+				e5.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} finally {
+				// this stuff happens regardless of any errors, (love
+				// try/catch/finally)
+
+				// //////////////////////
+
+				// String coordinates[] = {"36.487303","-94.308493"};
+
+				// double lat = Double.parseDouble(coordinates[0]);
+				// double lng = Double.parseDouble(coordinates[1]);
+
+				// GeoPoint p = new GeoPoint( //represents a geographical
+				// location
+				// (int) (lat * 1E6),
+				// (int) (lng * 1E6));
+
+				// mc.animateTo(p); //map goes to the coordinates
+				// mc.setZoom(17); //set your zoom level
+				// map.invalidate();
+				// ////////////////////
+
+				// Touchy t = new Touchy();
+				// List<Overlay> overlayList = map.getOverlays();
+				// overlayList.add(t);
 			}
-		} catch (NullPointerException e5) {
-			e5.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			// this stuff happens regardless of any errors, (love
-			// try/catch/finally)
-
-			// //////////////////////
-			
-			// String coordinates[] = {"36.487303","-94.308493"};
-
-			// double lat = Double.parseDouble(coordinates[0]);
-			// double lng = Double.parseDouble(coordinates[1]);
-
-			// GeoPoint p = new GeoPoint( //represents a geographical location
-			// (int) (lat * 1E6),
-			// (int) (lng * 1E6));
-
-			// mc.animateTo(p); //map goes to the coordinates
-			// mc.setZoom(17); //set your zoom level
-			// map.invalidate();
-			// ////////////////////
-
-			// Touchy t = new Touchy();
-			// List<Overlay> overlayList = map.getOverlays();
-			// overlayList.add(t);
 		}
 	}
 
@@ -146,7 +169,7 @@ public class MainActivity extends MapActivity implements View.OnClickListener {
 				double currentLong = loc.getLongitude();
 				double dist = distance(destLat, destLong, currentLat,
 						currentLong);
-				
+
 				latlong.setText("Distance to destination: "
 						+ String.valueOf(dist));
 
@@ -238,19 +261,19 @@ public class MainActivity extends MapActivity implements View.OnClickListener {
 
 				// main code that does the actual location checks
 				try {
-					
+
 					Geocoder coder = new Geocoder(this);
 					List<Address> address;
 					// test
 					address = coder.getFromLocationName(destAddress.getText()
 							.toString(), 5);
 					Address location = address.get(0);
-					
+
 					destLat = location.getLatitude();
 					destLong = location.getLongitude();
-					//double dist=distance(destLat, destLong, currentLat,
-					//	currentLong);
-					//totalDist=dist;
+					// double dist=distance(destLat, destLong, currentLat,
+					// currentLong);
+					// totalDist=dist;
 					GeoPoint p1 = new GeoPoint(
 							(int) (location.getLatitude() * 1E6),
 							(int) (location.getLongitude() * 1E6));
@@ -302,7 +325,7 @@ public class MainActivity extends MapActivity implements View.OnClickListener {
 			break;
 
 		case R.id.bStop:
-			//vibrate.cancel(); // should stop vibration on stop button
+			// vibrate.cancel(); // should stop vibration on stop button
 			lm.removeUpdates(locationListener); // should stop gps updates of //
 												// locationListener
 			finish();
@@ -366,21 +389,45 @@ public class MainActivity extends MapActivity implements View.OnClickListener {
 		fos1.close();
 	}
 
+	public int intervalTime() {
 
-
-	public int intervalTime(){
-		
-		if(totalDist>100){
+		if (totalDist > 100) {
 			return 20;
-		}else if(totalDist>50){
+		} else if (totalDist > 50) {
 			return 15;
-		}else if(totalDist>30){
+		} else if (totalDist > 30) {
 			return 7;
-		}else if(totalDist>10){
+		} else if (totalDist > 10) {
 			return 5;
-		}else{
+		} else {
 			return 1;
 		}
-		
+
+	}
+
+	// returns true if there is a data connection
+	private boolean netCheckin() {
+
+		try {
+
+			ConnectivityManager nInfo = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+			nInfo.getActiveNetworkInfo().isConnectedOrConnecting();
+
+			// Log.d(tag, "Net avail:"
+			// + nInfo.getActiveNetworkInfo().isConnectedOrConnecting());
+
+			ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+			NetworkInfo netInfo = cm.getActiveNetworkInfo();
+			if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+				// Log.d(tag, "Network available:true");
+				return true;
+			} else {
+				// Log.d(tag, "Network available:false");
+				return false;
+			}
+
+		} catch (Exception e) {
+			return false;
+		}
 	}
 }
