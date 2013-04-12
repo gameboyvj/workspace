@@ -136,7 +136,7 @@ public class Home extends Activity implements OnClickListener {
 					Class ourClass = null;
 					//always goes to MainActivity
 					try {
-						ourClass = Class.forName("com.example.maps.MainActivity");
+						ourClass = Class.forName("com.example.maps.Builder");
 					} catch (ClassNotFoundException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -249,7 +249,7 @@ public class Home extends Activity implements OnClickListener {
 		switch (v.getId()) {
 		case R.id.button1:
 			//basically the same as before but sends an empty string for the address and sends the string containing all previous searches
-			Intent i=new Intent("com.MAIN");
+			Intent i=new Intent("com.BUILDER");
 			Bundle basket = new Bundle();
 			basket.putString("location", "");
 			basket.putString("afterreading", finalfinalread);
