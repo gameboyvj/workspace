@@ -7,8 +7,9 @@
     <ListView
         android:id="@+id/listView1"
         android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_gravity="center" >
+        android:layout_height="200dp" 
+        android:layout_gravity="center_horizontal" >
+
     </ListView>
 
     <Button
@@ -16,5 +17,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Input" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="BugList: Set up new alarm disappears when you return 2nd time \nCheck if gps is on" />
 
 </LinearLayout>
