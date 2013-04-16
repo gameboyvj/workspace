@@ -1,9 +1,17 @@
 package com.example.maps;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Scanner;
+
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
@@ -13,7 +21,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-public class Builder extends Activity implements OnItemSelectedListener{
+public class Builder extends Activity implements OnItemSelectedListener, OnClickListener{
 	
 	TextView destination;
 	EditText address;
@@ -24,6 +32,8 @@ public class Builder extends Activity implements OnItemSelectedListener{
 	int vibrate=1;
 	int sound=0;
 	Button save, start, cancel;
+	String gotLocation = "";
+	String afterRead = "";
 	
 	
 	@Override
@@ -31,6 +41,9 @@ public class Builder extends Activity implements OnItemSelectedListener{
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.builder);
+		Bundle gotBasket = getIntent().getExtras();
+		gotLocation = gotBasket.getString("location");
+		afterRead = gotBasket.getString("afterreading");
 		destination=(TextView)findViewById(R.id.tvDestination);
 		address=(EditText)findViewById(R.id.etAddress);
 		theSpinner=(Spinner)findViewById(R.id.sp1);
@@ -39,6 +52,9 @@ public class Builder extends Activity implements OnItemSelectedListener{
 		save=(Button)findViewById(R.id.bnSave);
 		start=(Button)findViewById(R.id.bnSaveStart);
 		cancel=(Button)findViewById(R.id.bnCancel);
+		save.setOnClickListener(this);
+		start.setOnClickListener(this);
+		cancel.setOnClickListener(this);
 		
 		if (!vib.isChecked()) {
             vib.setChecked(true);
@@ -107,14 +123,58 @@ public class Builder extends Activity implements OnItemSelectedListener{
 		// TODO Auto-generated method stub
 		switch (v.getId()) {
 		case R.id.bnSave:
+			//Log.v("Saving","saving");
+			try {
+				save();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			//Log.v("Saving","saving");
 			finish();
 			break;
 		case R.id.bnSaveStart:
+			try {
+				save();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			//code to start page
+			
+			
 			finish();
 			break;
 		case R.id.bnCancel:
 			finish();
 			break;
 		}
+	}
+	
+	public void save() throws IOException{
+		RefUnsortedList<String> savedList = new RefUnsortedList<String>();
+		Scanner sc1 = new Scanner(afterRead);
+		sc1.useDelimiter(System.getProperty("line.separator"));
+		while (sc1.hasNextLine()) {
+			String value = sc1.nextLine();
+			savedList.addEnd(value);
+		}
+		//savedList.remove(address);
+		savedList.add(address.getText().toString());
+		deleteFile("saved");
+		FileOutputStream fos = openFileOutput("saved", Context.MODE_PRIVATE);
+		fos.close();
+		// traverses through the linked list and adds the data to the save file
+		LLNode<String> list1 = savedList.list;
+		FileOutputStream fos1 = openFileOutput("saved", Context.MODE_APPEND);
+		while (list1 != null) {
+			fos1.write(list1.getInfo().getBytes());
+			fos1.write(System.getProperty("line.separator").getBytes());
+			// Log.v("LinkedList", list1.getInfo());
+			// fos1.write("\n".getBytes());
+			list1 = list1.getLink();
+		}
+		fos1.close();
 	}
 }

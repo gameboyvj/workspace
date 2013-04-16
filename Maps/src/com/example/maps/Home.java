@@ -121,7 +121,7 @@ public class Home extends Activity implements OnClickListener {
 		// "saved"
 		if (fileList().length == 0) {
 			fos = openFileOutput("saved", Context.MODE_PRIVATE);
-			fos.write("blank".getBytes());
+			//fos.write("blank".getBytes());
 			fos.close();
 			ArrayList<String> searches = new ArrayList<String>();
 			searches.add("Set Up New Alarm");
@@ -172,7 +172,7 @@ public class Home extends Activity implements OnClickListener {
 			fis.close();
 			afterRead = buffer.toString();
 
-			if (afterRead.equals("blank/n")) {
+			if (afterRead.equals("")) {
 				// Sets up listView with a new alarm option
 				ArrayList<String> searches = new ArrayList<String>();
 				searches.add("Set Up New Alarm");
