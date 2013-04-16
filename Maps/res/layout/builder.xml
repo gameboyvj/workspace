@@ -46,19 +46,19 @@
         android:onClick="onCheckboxClicked" />
 
     <Button
-        android:id="@+id/button1"
+        android:id="@+id/bnSave"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="SaveStart" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/bnSaveStart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Save" />
 
     <Button
-        android:id="@+id/button3"
+        android:id="@+id/bnCancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Cancel" />

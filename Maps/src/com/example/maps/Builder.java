@@ -1,11 +1,13 @@
 package com.example.maps;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -21,6 +23,8 @@ public class Builder extends Activity implements OnItemSelectedListener{
 	CheckBox sou;
 	int vibrate=1;
 	int sound=0;
+	Button save, start, cancel;
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +36,10 @@ public class Builder extends Activity implements OnItemSelectedListener{
 		theSpinner=(Spinner)findViewById(R.id.sp1);
 		vib=(CheckBox)findViewById(R.id.cbVibrate);
 		sou=(CheckBox)findViewById(R.id.cbSound);
+		save=(Button)findViewById(R.id.bnSave);
+		start=(Button)findViewById(R.id.bnSaveStart);
+		cancel=(Button)findViewById(R.id.bnCancel);
+		
 		if (!vib.isChecked()) {
             vib.setChecked(true);
         }
@@ -92,7 +100,21 @@ public class Builder extends Activity implements OnItemSelectedListener{
 	            else
 	                sound=0;
 	            break;
-	        // TODO: Veggie sandwich
 	    }
+	}
+	
+	public void onClick(View v) {
+		// TODO Auto-generated method stub
+		switch (v.getId()) {
+		case R.id.bnSave:
+			finish();
+			break;
+		case R.id.bnSaveStart:
+			finish();
+			break;
+		case R.id.bnCancel:
+			finish();
+			break;
+		}
 	}
 }
