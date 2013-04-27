@@ -35,6 +35,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
+
 public class Home extends Activity implements OnClickListener {
 
 	ArrayList<String> searches = new ArrayList<String>();
@@ -43,6 +44,8 @@ public class Home extends Activity implements OnClickListener {
 	String finalfinalread = "";
 	private ArrayAdapter<String> listAdapter;
 	Button b;
+	
+	public static final String PREFS_NAME = "MyPrefsFile";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +63,7 @@ public class Home extends Activity implements OnClickListener {
 		// layout.addView(new Button(this));
 		String afterRead = "";
 
+		//if(isGooglePlayServicesAvailable()!=SUCCESS)
 		// checks if there are any save files
 		// if (fileList().length == 0) {
 		// creates a new save file called "saved"
@@ -171,7 +175,9 @@ public class Home extends Activity implements OnClickListener {
 			}
 			fis.close();
 			afterRead = buffer.toString();
-
+			
+			//this is to see if the person still hasn't set up an alarm 
+			//(fixes bug where returning to app without building alarm would not display "Set up Alarm")
 			if (afterRead.equals("")) {
 				// Sets up listView with a new alarm option
 				ArrayList<String> searches = new ArrayList<String>();
@@ -207,7 +213,8 @@ public class Home extends Activity implements OnClickListener {
 					}
 
 				});
-
+			
+		
 			} else {
 				/*
 				 * } // reads through "saved" and builds a string out of it
@@ -222,7 +229,6 @@ public class Home extends Activity implements OnClickListener {
 				// byte[] buffer = new byte[1024];
 				// int length;
 
-				// some magic i got from stackOverflow
 				// reads the bytes from "saved" and converts to 1 string
 				// while ((length = fis.read(buffer)) != -1) {
 				// fileContent.append(new String(buffer));
@@ -234,10 +240,22 @@ public class Home extends Activity implements OnClickListener {
 				// builds searches arraylist and adds the location
 				Scanner sc1 = new Scanner(afterRead);
 				// int i = 0;
-				sc1.useDelimiter(System.getProperty("line.separator"));
+				sc1.useDelimiter(System.getProperty("line.separator"));//+"~");
 				while (sc1.hasNextLine()) {
 					String value = sc1.nextLine();
-
+					Scanner internalScan=new Scanner(value);
+					internalScan.useDelimiter("~");
+					String part1="";
+					String part2="";
+					String part3="";
+					String part4="";
+					while(internalScan.hasNext()){
+						part1=internalScan.next();
+						
+						Log.v("Address", part1);
+						break;
+						
+					}
 					// if(!value.equals("\n")){
 					searches.add(value);
 					// }
@@ -268,10 +286,10 @@ public class Home extends Activity implements OnClickListener {
 						// TODO Auto-generated method stub
 						String location = searches.get(arg2);// [arg2];
 						Class ourClass = null;
-						// always goes to MainActivity
+						// always goes to standbyscreen
 						try {
 							ourClass = Class
-									.forName("com.example.maps.MainActivity");
+									.forName("com.example.maps.StandbyScreen");
 						} catch (ClassNotFoundException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -283,7 +301,8 @@ public class Home extends Activity implements OnClickListener {
 						basket.putString("location", location);
 						basket.putString("afterreading", finalread);
 						// builds intent, adds the basket and starts activity
-						Intent ourIntent = new Intent(Home.this, ourClass);
+						//Intent ourIntent = new Intent(Home.this, ourClass);
+						Intent ourIntent=new Intent("com.STANDBY");
 						ourIntent.putExtras(basket);
 						startActivity(ourIntent);
 					}

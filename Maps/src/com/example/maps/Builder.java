@@ -161,7 +161,7 @@ public class Builder extends Activity implements OnItemSelectedListener, OnClick
 			savedList.addEnd(value);
 		}
 		//savedList.remove(address);
-		savedList.add(address.getText().toString());
+		savedList.add(address.getText().toString()+"~"+String.valueOf(enactedValue)+"~"+String.valueOf(vibrate)+"~"+String.valueOf(sound));
 		deleteFile("saved");
 		FileOutputStream fos = openFileOutput("saved", Context.MODE_PRIVATE);
 		fos.close();
