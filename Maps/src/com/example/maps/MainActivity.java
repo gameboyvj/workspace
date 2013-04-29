@@ -1,5 +1,5 @@
 package com.example.maps;
-
+/*
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -27,10 +27,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.google.android.maps.GeoPoint;
-import com.google.android.maps.MapActivity;
-import com.google.android.maps.MapController;
-import com.google.android.maps.MapView;
+//import com.google.android.maps.GeoPoint;
+//import com.google.android.maps.MapActivity;
+//import com.google.android.maps.MapController;
+//import com.google.android.maps.MapView;
 
 /*
  * THINGS TO IMRPOVE/CHECK:
@@ -43,6 +43,7 @@ import com.google.android.maps.MapView;
  * Do we want to stop vibration on leaving app? (onPause)
  * 
  */
+/*
 public class MainActivity extends MapActivity implements View.OnClickListener {
 
 	private LocationManager lm;
@@ -191,6 +192,7 @@ public class MainActivity extends MapActivity implements View.OnClickListener {
 					 * vibrate for your pause times and pause for your //
 					 * vibrate times ! vibrate.vibrate(pattern, 0);
 					 */
+/*
 				}
 			}
 		}
@@ -430,4 +432,4 @@ public class MainActivity extends MapActivity implements View.OnClickListener {
 			return false;
 		}
 	}
-}
+}*/

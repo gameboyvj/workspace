@@ -1,7 +1,7 @@
 package com.example.maps;
 
-import com.google.android.maps.MapController;
-import com.google.android.maps.MapView;
+//import com.google.android.maps.MapController;
+//import com.google.android.maps.MapView;
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import com.pushback.coal.R;
 
 public class StandbyScreen extends FragmentActivity implements ActionBar.TabListener {
 
@@ -32,16 +33,16 @@ public class StandbyScreen extends FragmentActivity implements ActionBar.TabList
      * time.
      */
     ViewPager mViewPager;
-    MapView map;
-	private MapController mc;
+  //  MapView map;
+	//private MapController mc;
 	
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.standbyscreen);
         
-        map = (MapView) findViewById(R.id.mvMain);
-		map.setBuiltInZoomControls(true);
-		mc = map.getController();
+      //  map = (MapView) findViewById(R.id.mvMain);
+		//map.setBuiltInZoomControls(true);
+		//mc = map.getController();
 		
         // Create the adapter that will return a fragment for each of the three primary sections
         // of the app.

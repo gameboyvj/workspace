@@ -2,6 +2,7 @@ package com.example.maps;
 
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
+import com.pushback.coal.R;
 
 public class Options extends PreferenceActivity {
 

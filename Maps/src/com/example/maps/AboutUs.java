@@ -2,6 +2,7 @@ package com.example.maps;
 
 import android.app.Activity;
 import android.os.Bundle;
+import com.pushback.coal.R;
 
 public class AboutUs extends Activity {
 	
