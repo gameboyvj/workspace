@@ -16,6 +16,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
 import com.pushback.coal.R;
 
 public class StandbyScreen extends FragmentActivity implements ActionBar.TabListener {
@@ -187,18 +192,65 @@ public class StandbyScreen extends FragmentActivity implements ActionBar.TabList
      * A dummy fragment representing a section of the app, but that simply displays dummy text.
      */
     public static class DummySectionFragment extends Fragment {
-
+    	MapView mapView;
+    	GoogleMap map;
         public static final String ARG_SECTION_NUMBER = "section_number";
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_section_dummy, container, false);
-            Bundle args = getArguments();
+         // Gets the MapView from the XML layout and creates it
+            mapView = (MapView) rootView.findViewById(R.id.mapview);
+
+            mapView.onCreate(savedInstanceState);
+            mapView.onResume(); //without this, map showed but was empty 
+
+            
+            map = mapView.getMap(); 
+            map.getUiSettings().setMyLocationButtonEnabled(false);
+            map.setMyLocationEnabled(true);
+            
+            // Gets to GoogleMap from the MapView and does initialization stuff
+            map = mapView.getMap(); 
+            map.getUiSettings().setMyLocationButtonEnabled(false);
+            map.setMyLocationEnabled(true);
+            map.setMapType(4);
+
+            // Needs to call MapsInitializer before doing any CameraUpdateFactory calls
+            try {
+                MapsInitializer.initialize(this.getActivity());
+            } catch (GooglePlayServicesNotAvailableException e) {
+                e.printStackTrace();
+            }
+            //Bundle args = getArguments();
             //((TextView) rootView.findViewById(android.R.id.text1)).setText(
             //        getString(R.string.dummy_section_text, args.getInt(ARG_SECTION_NUMBER)));
             return rootView;
         }
+        @Override
+            public void onResume() {
+                super.onResume();
+                mapView.onResume();
+            }
+
+            @Override
+            public void onPause() {
+                super.onPause();
+                mapView.onPause();
+            }
+
+            @Override
+            public void onDestroy() {
+                super.onDestroy();
+                mapView.onDestroy();     
+            }
+      
+            @Override
+            public void onLowMemory() {
+                super.onLowMemory();    
+                mapView.onLowMemory();      
+            }
     }
     
     
