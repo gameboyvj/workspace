@@ -197,3 +197,5 @@ Maps/gen/com/example/maps/R.java
 gifting/
 
 *.properties
+
+Maps/gen/com/google/android/gms/R.java
