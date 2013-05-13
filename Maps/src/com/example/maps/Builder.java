@@ -8,6 +8,7 @@ import java.util.Scanner;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -27,15 +28,16 @@ public class Builder extends Activity implements OnItemSelectedListener, OnClick
 	TextView destination;
 	EditText address;
 	Spinner theSpinner;
-	double enactedValue=1;
+	float enactedValue=1;
 	CheckBox vib;
 	CheckBox sou;
-	int vibrate=1;
-	int sound=0;
+	boolean vibrate=true;
+	boolean sound=false;
 	Button save, start, cancel;
 	String gotLocation = "";
 	String afterRead = "";
 	
+	public static final String PREFS_NAME = "MyPrefsFile";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +83,7 @@ public class Builder extends Activity implements OnItemSelectedListener, OnClick
 		if(arg2==0)
 			enactedValue=1;
 		else if(arg2==1)
-			enactedValue=.5;
+			enactedValue=(float) .5;
 		else if(arg2==2)
 			enactedValue=1;
 		else if(arg2==3)
@@ -107,15 +109,15 @@ public class Builder extends Activity implements OnItemSelectedListener, OnClick
 	    switch(view.getId()) {
 	        case R.id.cbVibrate:
 	            if (checked)
-	                vibrate=1;
+	                vibrate=true;
 	            else
-	                vibrate=0;
+	                vibrate=false;
 	            break;
 	        case R.id.cbSound:
 	            if (checked)
-	                sound=1;
+	                sound=true;
 	            else
-	                sound=0;
+	                sound=false;
 	            break;
 	    }
 	}
@@ -142,10 +144,8 @@ public class Builder extends Activity implements OnItemSelectedListener, OnClick
 				e.printStackTrace();
 			}
 			
-			//code to start page
-			
-			
-			finish();
+			Intent i = new Intent("com.STANDBY");
+			startActivity(i);
 			break;
 		case R.id.bnCancel:
 			finish();
@@ -177,5 +177,14 @@ public class Builder extends Activity implements OnItemSelectedListener, OnClick
 			list1 = list1.getLink();
 		}
 		fos1.close();
+		
+		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+	      SharedPreferences.Editor editor = settings.edit();
+	      editor.putString("address", address.getText().toString());
+	      editor.putFloat("enactedValue", enactedValue);
+	      editor.putBoolean("vibrate", vibrate);
+	      editor.putBoolean("sound", sound);
+	      // Commit the edits!
+	      editor.commit();
 	}
 }

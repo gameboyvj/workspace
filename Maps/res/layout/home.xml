@@ -22,7 +22,7 @@
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="BugList: Check if gps is on\nNotifications missing\nbackbutton on standby works\nnottransfering 
-        info between activites\ncheck  isGooglePlayServicesAvailable()" />
+        android:text="BugList: Check if gps is on\nnet check\nNotifications missing\nbackbutton on standby works\nnottransfering 
+        info between activites\ncheck isGooglePlayServicesAvailable()\nadd alert for missing info in builder \nhome list not in order" />
 
 </LinearLayout>

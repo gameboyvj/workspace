@@ -6,6 +6,7 @@ package com.example.maps;
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -40,7 +41,12 @@ public class StandbyScreen extends FragmentActivity implements ActionBar.TabList
     ViewPager mViewPager;
   //  MapView map;
 	//private MapController mc;
-	
+    public static final String PREFS_NAME = "MyPrefsFile";
+    String address;
+    float enactedValue;
+    boolean vibrate;
+	boolean sound;
+    
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.standbyscreen);
@@ -88,8 +94,17 @@ public class StandbyScreen extends FragmentActivity implements ActionBar.TabList
                             .setTabListener(this));
         }
         //actionBar.hide();
+        getSettings();
     }
 
+    public void getSettings(){
+    	SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+    	address = settings.getString("address", "error");
+    	enactedValue = settings.getFloat("enactedValue", 1);
+        vibrate = settings.getBoolean("vibrate", true);
+        sound = settings.getBoolean("sound", false);
+    	
+    }
     @Override
     public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
     }
@@ -206,10 +221,6 @@ public class StandbyScreen extends FragmentActivity implements ActionBar.TabList
             mapView.onCreate(savedInstanceState);
             mapView.onResume(); //without this, map showed but was empty 
 
-            
-            map = mapView.getMap(); 
-            map.getUiSettings().setMyLocationButtonEnabled(false);
-            map.setMyLocationEnabled(true);
             
             // Gets to GoogleMap from the MapView and does initialization stuff
             map = mapView.getMap(); 
