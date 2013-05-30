@@ -45,17 +45,17 @@
             android:src="@drawable/cabgpic" />
 
         <Button
-            android:id="@+id/demo_collection_button"
+            android:id="@+id/bnStop"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:text="Button" />
+            android:text="Stop" />
 
         <Button
             android:id="@+id/demo_external_activity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Button" />
+            android:text="Button (not working)" />
     </LinearLayout>
 
 </FrameLayout>

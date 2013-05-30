@@ -3,11 +3,23 @@ package com.example.maps;
 //import com.google.android.maps.MapController;
 //import com.google.android.maps.MapView;
 
+import java.io.IOException;
+import java.util.List;
+
 import android.app.ActionBar;
+import android.app.AlertDialog;
 import android.app.FragmentTransaction;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -17,6 +29,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.maps.GoogleMap;
@@ -47,6 +60,11 @@ public class StandbyScreen extends FragmentActivity implements ActionBar.TabList
     boolean vibrate;
 	boolean sound;
     
+	public LocationManager lm;
+	public LocationListener locationListener;
+	double destLat = 0;
+	double destLong = 0;
+	
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.standbyscreen);
@@ -95,16 +113,159 @@ public class StandbyScreen extends FragmentActivity implements ActionBar.TabList
         }
         //actionBar.hide();
         getSettings();
+        doLocationStuff();
     }
 
+    public void doLocationStuff(){
+    	try {
+
+			Geocoder coder = new Geocoder(this);
+			List<Address> listaddress;
+			// test
+			listaddress = coder.getFromLocationName(address, 5);
+			Address location = listaddress.get(0);
+
+			destLat = location.getLatitude();
+			destLong = location.getLongitude();
+			// double dist=distance(destLat, destLong, currentLat,
+			// currentLong);
+			// totalDist=dist;
+			//GeoPoint p1 = new GeoPoint(
+					//(int) (location.getLatitude() * 1E6),
+					//(int) (location.getLongitude() * 1E6));
+
+			//mc.animateTo(p1); // map goes to the coordinates
+			//mc.setZoom(17); // set your zoom level
+			//map.invalidate();
+
+			// double currentLat = loc.getLatitude();
+			// double currentLong = loc.getLongitude();
+			// double currentLat = 40.4286995;
+			// double currentLong = -74.3635812;
+			// double dist = distance(destLat, destLong, currentLat,
+			// currentLong);
+			// latlong.setText("Distance to destination: " +
+			// String.valueOf(dist));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			// ---use the LocationManager class to obtain GPS
+			// locations---
+			lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+			locationListener = new MyLocationListener(); // a location
+															// listener
+															// to
+															// be used
+															// below
+			SharedPreferences getPrefs = PreferenceManager
+					.getDefaultSharedPreferences(getBaseContext());
+			long interval = getPrefs.getLong("updateInterval", 1); // gets
+																	// value
+																	// for
+																	// gps
+																	// update
+																	// interval,
+																	// defaults
+																	// to
+																	// 1
+			lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+					interval * 60 * 1000, 0, locationListener); // updates
+																// your
+			// location
+			// every 1
+			// min
+		}
+	}
+    
     public void getSettings(){
     	SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
     	address = settings.getString("address", "error");
     	enactedValue = settings.getFloat("enactedValue", 1);
         vibrate = settings.getBoolean("vibrate", true);
         sound = settings.getBoolean("sound", false);
-    	
+        System.out.println(address);
+        System.out.println(enactedValue);
+        System.out.println(vibrate);
+        System.out.println(sound);
     }
+    public class MyLocationListener implements LocationListener {
+		public void onLocationChanged(Location loc) {
+			if (loc != null && destLat != 0 && destLong != 0) {
+				
+				 Toast.makeText(
+				 getBaseContext(),
+				 "Location changed : Lat: " + loc.getLatitude()
+				 + " Lng: " + loc.getLongitude(),
+				 Toast.LENGTH_SHORT).show();
+				 System.out.println("MyLocationListener Working");
+				// GeoPoint p = new GeoPoint((int) (loc.getLatitude() * 1E6),
+				// (int) (loc.getLongitude() * 1E6));
+				// mc.animateTo(p);
+				// mc.setZoom(16);
+				// map.invalidate();
+				double currentLat = loc.getLatitude();
+				double currentLong = loc.getLongitude();
+				double dist = distance(destLat, destLong, currentLat,
+						currentLong);
+
+				//latlong.setText("Distance to destination: "
+				//		+ String.valueOf(dist));
+
+				if (dist <= 1) {
+					lm.removeUpdates(locationListener);
+					Intent goEndPoint = new Intent("com.ENDPOINT");
+					startActivity(goEndPoint);
+					/*
+					 * // Get instance of Vibrator from current Context vibrate
+					 * = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+					 * 
+					 * // Start immediately // Vibrate for 200 milliseconds //
+					 * Sleep for 500 milliseconds long[] pattern = { 0, 200, 500
+					 * };
+					 * 
+					 * // The "0" means to repeat the pattern starting at the //
+					 * beginning // CUIDADO: If you start at the wrong index
+					 * (e.g., 1) then // your pattern will be off -- // You will
+					 * vibrate for your pause times and pause for your //
+					 * vibrate times ! vibrate.vibrate(pattern, 0);
+					 */
+
+				}
+			}
+		}
+
+		public void onProviderDisabled(String provider) {
+			// TODO Auto-generated method stub
+
+		}
+
+		public void onProviderEnabled(String provider) {
+			// TODO Auto-generated method stub
+
+		}
+
+		public void onStatusChanged(String provider, int status, Bundle extras) {
+			// TODO Auto-generated method stub
+
+		}
+
+	}
+    public double distance(double lat1, double lng1, double lat2, double lng2) {
+		double earthRadius = 3958.75;
+		double dLat = Math.toRadians(lat2 - lat1);
+		double dLng = Math.toRadians(lng2 - lng1);
+		double sindLat = Math.sin(dLat / 2);
+		double sindLng = Math.sin(dLng / 2);
+		double a = Math.pow(sindLat, 2) + Math.pow(sindLng, 2)
+				* Math.cos(Math.toRadians(lat1))
+				* Math.cos(Math.toRadians(lat2));
+		double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+		double dist = earthRadius * c;
+
+		return dist;
+	}
     @Override
     public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
     }
@@ -173,12 +334,15 @@ public class StandbyScreen extends FragmentActivity implements ActionBar.TabList
             View rootView = inflater.inflate(R.layout.fragment_section_launchpad, container, false);
 
             // Demonstration of a collection-browsing activity.
-            rootView.findViewById(R.id.demo_collection_button)
+            rootView.findViewById(R.id.bnStop)
                     .setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                            // Intent intent = new Intent(getActivity(), CollectionDemoActivity.class);
                           //  startActivity(intent);
+                        	//lm.removeUpdates(locationListener); // should stop gps updates of //
+							// locationListener
+                        	//finish();
                         }
                     });
 
