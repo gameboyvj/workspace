@@ -65,6 +65,7 @@ public class StandbyScreen extends FragmentActivity implements ActionBar.TabList
 	double destLat = 0;
 	double destLong = 0;
 	
+	//seems to be working
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.standbyscreen);
