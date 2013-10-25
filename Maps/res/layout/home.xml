@@ -23,6 +23,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="BugList: Check if gps is on\nnet check\nNotifications missing\nbackbutton on standby works\nnottransfering 
-        info between activites\ncheck isGooglePlayServicesAvailable()\nadd alert for missing info in builder \nhome list not in order" />
+        info between activites\ncheck isGooglePlayServicesAvailable()\nadd alert for missing info in builder \nhome list not in order
+        \nlocation listener and lm were made static, might cause problems" />
 
 </LinearLayout>

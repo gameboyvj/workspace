@@ -10,7 +10,6 @@ import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.FragmentTransaction;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Address;
@@ -27,17 +26,24 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.pushback.coal.R;
 
-public class StandbyScreen extends FragmentActivity implements ActionBar.TabListener {
+public class StandbyScreen extends FragmentActivity implements ActionBar.TabListener, OnClickListener {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide fragments for each of the
@@ -55,15 +61,21 @@ public class StandbyScreen extends FragmentActivity implements ActionBar.TabList
   //  MapView map;
 	//private MapController mc;
     public static final String PREFS_NAME = "MyPrefsFile";
-    String address;
+    static String address;
     float enactedValue;
     boolean vibrate;
 	boolean sound;
+	Button stopbn;
+    //static TextView destText;
     
-	public LocationManager lm;
-	public LocationListener locationListener;
-	double destLat = 0;
-	double destLong = 0;
+	public static LocationManager lm;
+	public static LocationListener locationListener;
+	static double destLat = 0;
+	static double destLong = 0;
+	double currentLat=0;
+	double currentLong=0;
+	static GoogleMap map;
+	
 	
 	//seems to be working
     public void onCreate(Bundle savedInstanceState) {
@@ -115,6 +127,7 @@ public class StandbyScreen extends FragmentActivity implements ActionBar.TabList
         //actionBar.hide();
         getSettings();
         doLocationStuff();
+        
     }
 
     public void doLocationStuff(){
@@ -180,6 +193,7 @@ public class StandbyScreen extends FragmentActivity implements ActionBar.TabList
 		}
 	}
     
+    //retrieves data from the sharedprefs
     public void getSettings(){
     	SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
     	address = settings.getString("address", "error");
@@ -191,31 +205,37 @@ public class StandbyScreen extends FragmentActivity implements ActionBar.TabList
         System.out.println(vibrate);
         System.out.println(sound);
     }
+    
     public class MyLocationListener implements LocationListener {
 		public void onLocationChanged(Location loc) {
 			if (loc != null && destLat != 0 && destLong != 0) {
 				
-				 Toast.makeText(
-				 getBaseContext(),
-				 "Location changed : Lat: " + loc.getLatitude()
-				 + " Lng: " + loc.getLongitude(),
-				 Toast.LENGTH_SHORT).show();
+				 //Toast.makeText(
+				// getBaseContext(),
+				// "Location changed : Lat: " + loc.getLatitude()
+				// + " Lng: " + loc.getLongitude(),
+				// Toast.LENGTH_SHORT).show();
 				 System.out.println("MyLocationListener Working");
 				// GeoPoint p = new GeoPoint((int) (loc.getLatitude() * 1E6),
 				// (int) (loc.getLongitude() * 1E6));
 				// mc.animateTo(p);
 				// mc.setZoom(16);
 				// map.invalidate();
-				double currentLat = loc.getLatitude();
-				double currentLong = loc.getLongitude();
+				currentLat = loc.getLatitude();
+				currentLong = loc.getLongitude();
 				double dist = distance(destLat, destLong, currentLat,
 						currentLong);
 
 				//latlong.setText("Distance to destination: "
 				//		+ String.valueOf(dist));
-
-				if (dist <= 1) {
+				LatLng latLng = new LatLng(loc.getLatitude(), loc.getLongitude());
+			    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 10);
+			    map.animateCamera(cameraUpdate);
+			    
+			    //checks distance away from destination is less than enacted value and take me to endpoint.java
+				if (dist <= enactedValue) {
 					lm.removeUpdates(locationListener);
+					map.clear();
 					Intent goEndPoint = new Intent("com.ENDPOINT");
 					startActivity(goEndPoint);
 					/*
@@ -328,17 +348,24 @@ public class StandbyScreen extends FragmentActivity implements ActionBar.TabList
      * A fragment that launches other parts of the demo application.
      */
     public static class LaunchpadSectionFragment extends Fragment {
-
+    	TextView destText1;
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_section_launchpad, container, false);
-
+            destText1=(TextView) rootView.findViewById(R.id.tvaddress);
+            destText1.setText(address);
+            //rootView.findViewById(R.id.tvaddress).setText("Hello");
+            
             // Demonstration of a collection-browsing activity.
             rootView.findViewById(R.id.bnStop)
                     .setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
+                        	lm.removeUpdates(locationListener);
+        					map.clear();
+        					Intent goHome = new Intent("com.HOME");
+        					startActivity(goHome);
                            // Intent intent = new Intent(getActivity(), CollectionDemoActivity.class);
                           //  startActivity(intent);
                         	//lm.removeUpdates(locationListener); // should stop gps updates of //
@@ -371,9 +398,10 @@ public class StandbyScreen extends FragmentActivity implements ActionBar.TabList
     /**
      * A dummy fragment representing a section of the app, but that simply displays dummy text.
      */
+    //Map is displayed on this fragment
     public static class DummySectionFragment extends Fragment {
     	MapView mapView;
-    	GoogleMap map;
+    	
         public static final String ARG_SECTION_NUMBER = "section_number";
 
         @Override
@@ -382,7 +410,9 @@ public class StandbyScreen extends FragmentActivity implements ActionBar.TabList
             View rootView = inflater.inflate(R.layout.fragment_section_dummy, container, false);
          // Gets the MapView from the XML layout and creates it
             mapView = (MapView) rootView.findViewById(R.id.mapview);
-
+            //GoogleMapOptions options = new GoogleMapOptions();
+           // mapView=new MapView(map, options)
+            
             mapView.onCreate(savedInstanceState);
             mapView.onResume(); //without this, map showed but was empty 
 
@@ -392,7 +422,10 @@ public class StandbyScreen extends FragmentActivity implements ActionBar.TabList
             map.getUiSettings().setMyLocationButtonEnabled(false);
             map.setMyLocationEnabled(true);
             map.setMapType(4);
-
+            map.addMarker(new MarkerOptions()
+            .title(address)
+            .snippet("Destination")
+            .position(new LatLng(destLat, destLong)));
             // Needs to call MapsInitializer before doing any CameraUpdateFactory calls
             try {
                 MapsInitializer.initialize(this.getActivity());
@@ -403,31 +436,45 @@ public class StandbyScreen extends FragmentActivity implements ActionBar.TabList
             //((TextView) rootView.findViewById(android.R.id.text1)).setText(
             //        getString(R.string.dummy_section_text, args.getInt(ARG_SECTION_NUMBER)));
             return rootView;
+            
         }
         @Override
-            public void onResume() {
-                super.onResume();
-                mapView.onResume();
-            }
+        public void onResume() {
+        	super.onResume();
+        	mapView.onResume();
+        }
 
-            @Override
-            public void onPause() {
-                super.onPause();
-                mapView.onPause();
-            }
+        @Override
+        public void onPause() {
+        	super.onPause();
+        	mapView.onPause();
+        }
 
-            @Override
-            public void onDestroy() {
-                super.onDestroy();
-                mapView.onDestroy();     
-            }
+        @Override
+        public void onDestroy() {
+        	super.onDestroy();
+        	mapView.onDestroy();     
+        }
       
-            @Override
-            public void onLowMemory() {
-                super.onLowMemory();    
-                mapView.onLowMemory();      
-            }
+        @Override
+        public void onLowMemory() {
+        	super.onLowMemory();    
+        	mapView.onLowMemory();      
+        }
     }
-    
+	@Override
+	public void onClick(View arg0) {
+		// TODO Auto-generated method stub
+		//when you press stop button, it removes locationlistener and heads back to home screen
+		lm.removeUpdates(locationListener);
+		map.clear();
+		Intent goBackHome = new Intent("com.HOME");
+		startActivity(goBackHome);
+		
+	}
+	@Override
+	public void onBackPressed() {
+		//makes it so you can't hit back button
+	}
     
 }
