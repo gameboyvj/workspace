@@ -6,9 +6,13 @@ package com.example.maps;
 import java.io.IOException;
 import java.util.List;
 
+import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.FragmentTransaction;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -23,6 +27,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -126,6 +131,7 @@ public class StandbyScreen extends FragmentActivity implements ActionBar.TabList
         }
         //actionBar.hide();
         getSettings();
+        doNotification();
         doLocationStuff();
         
     }
@@ -193,6 +199,41 @@ public class StandbyScreen extends FragmentActivity implements ActionBar.TabList
 		}
 	}
     
+    @SuppressLint("NewApi")
+	public void doNotification(){
+    	
+    	NotificationCompat.Builder mBuilder =
+    	        new NotificationCompat.Builder(this)
+    	        .setSmallIcon(R.drawable.ic_action_search)
+    	        .setContentTitle("Commuter Alarm")
+    	        .setContentText("Navigating to"+address);
+    	// Creates an explicit intent for an Activity in your app
+    	Intent resultIntent = new Intent(this, StandbyScreen.class);
+
+    	// The stack builder object will contain an artificial back stack for the
+    	// started Activity.
+    	// This ensures that navigating backward from the Activity leads out of
+    	// your application to the Home screen.
+    	TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+    	// Adds the back stack for the Intent (but not the Intent itself)
+    	stackBuilder.addParentStack(StandbyScreen.class);
+    	// Adds the Intent that starts the Activity to the top of the stack
+    	stackBuilder.addNextIntent(resultIntent);
+    	PendingIntent resultPendingIntent =
+    	        stackBuilder.getPendingIntent(
+    	            0,
+    	            PendingIntent.FLAG_UPDATE_CURRENT
+    	        );
+    	mBuilder.setContentIntent(resultPendingIntent);
+    	NotificationManager mNotificationManager =
+    	    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+    	// mId allows you to update the notification later on.
+    	int mId=1;
+    	mNotificationManager.notify(mId, mBuilder.build());
+    	
+    	
+    	
+    }
     //retrieves data from the sharedprefs
     public void getSettings(){
     	SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
@@ -230,6 +271,7 @@ public class StandbyScreen extends FragmentActivity implements ActionBar.TabList
 				//		+ String.valueOf(dist));
 				LatLng latLng = new LatLng(loc.getLatitude(), loc.getLongitude());
 			    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 10);
+			    
 			    map.animateCamera(cameraUpdate);
 			    
 			    //checks distance away from destination is less than enacted value and take me to endpoint.java
@@ -287,6 +329,7 @@ public class StandbyScreen extends FragmentActivity implements ActionBar.TabList
 
 		return dist;
 	}
+    
     @Override
     public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
     }
@@ -419,13 +462,14 @@ public class StandbyScreen extends FragmentActivity implements ActionBar.TabList
             
             // Gets to GoogleMap from the MapView and does initialization stuff
             map = mapView.getMap(); 
-            map.getUiSettings().setMyLocationButtonEnabled(false);
+            map.getUiSettings().setMyLocationButtonEnabled(true);
             map.setMyLocationEnabled(true);
-            map.setMapType(4);
+            map.setMapType(1);
             map.addMarker(new MarkerOptions()
             .title(address)
             .snippet("Destination")
             .position(new LatLng(destLat, destLong)));
+            //map.setPadding(-200, 0, 0, 0);
             // Needs to call MapsInitializer before doing any CameraUpdateFactory calls
             try {
                 MapsInitializer.initialize(this.getActivity());
@@ -468,10 +512,14 @@ public class StandbyScreen extends FragmentActivity implements ActionBar.TabList
 		//when you press stop button, it removes locationlistener and heads back to home screen
 		lm.removeUpdates(locationListener);
 		map.clear();
+		//finish();  
 		Intent goBackHome = new Intent("com.HOME");
+		goBackHome.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+		//goBackHome.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		startActivity(goBackHome);
-		
+		finish();
 	}
+	
 	@Override
 	public void onBackPressed() {
 		//makes it so you can't hit back button

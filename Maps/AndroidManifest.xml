@@ -63,7 +63,8 @@
         -->
         <activity
             android:name="com.example.maps.endPoint"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:noHistory="true" >
             <intent-filter>
                 <action android:name="com.ENDPOINT" />
 
@@ -92,7 +93,8 @@
         </activity>
         <activity
             android:name="com.example.maps.Builder"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:noHistory="true" >
             <intent-filter>
                 <action android:name="com.BUILDER" />
 
