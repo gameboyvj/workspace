@@ -29,6 +29,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -147,25 +148,6 @@ public class StandbyScreen extends FragmentActivity implements ActionBar.TabList
 
 			destLat = location.getLatitude();
 			destLong = location.getLongitude();
-			// double dist=distance(destLat, destLong, currentLat,
-			// currentLong);
-			// totalDist=dist;
-			//GeoPoint p1 = new GeoPoint(
-					//(int) (location.getLatitude() * 1E6),
-					//(int) (location.getLongitude() * 1E6));
-
-			//mc.animateTo(p1); // map goes to the coordinates
-			//mc.setZoom(17); // set your zoom level
-			//map.invalidate();
-
-			// double currentLat = loc.getLatitude();
-			// double currentLong = loc.getLongitude();
-			// double currentLat = 40.4286995;
-			// double currentLong = -74.3635812;
-			// double dist = distance(destLat, destLong, currentLat,
-			// currentLong);
-			// latlong.setText("Distance to destination: " +
-			// String.valueOf(dist));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -206,7 +188,7 @@ public class StandbyScreen extends FragmentActivity implements ActionBar.TabList
     	        new NotificationCompat.Builder(this)
     	        .setSmallIcon(R.drawable.ic_action_search)
     	        .setContentTitle("Commuter Alarm")
-    	        .setContentText("Navigating to"+address);
+    	        .setContentText("Navigating to  "+ address);
     	// Creates an explicit intent for an Activity in your app
     	Intent resultIntent = new Intent(this, StandbyScreen.class);
 
@@ -251,11 +233,11 @@ public class StandbyScreen extends FragmentActivity implements ActionBar.TabList
 		public void onLocationChanged(Location loc) {
 			if (loc != null && destLat != 0 && destLong != 0) {
 				
-				 //Toast.makeText(
-				// getBaseContext(),
-				// "Location changed : Lat: " + loc.getLatitude()
-				// + " Lng: " + loc.getLongitude(),
-				// Toast.LENGTH_SHORT).show();
+				 Toast.makeText(
+				 getBaseContext(),
+			 "Location changed : Lat: " + loc.getLatitude()
+				 + " Lng: " + loc.getLongitude(),
+				 Toast.LENGTH_SHORT).show();
 				 System.out.println("MyLocationListener Working");
 				// GeoPoint p = new GeoPoint((int) (loc.getLatitude() * 1E6),
 				// (int) (loc.getLongitude() * 1E6));
@@ -264,9 +246,12 @@ public class StandbyScreen extends FragmentActivity implements ActionBar.TabList
 				// map.invalidate();
 				currentLat = loc.getLatitude();
 				currentLong = loc.getLongitude();
+				
+				//Log.v("Current Lat", String.valueOf(currentLat));
+				//Log.v("Current Long", String.valueOf(currentLong));
 				double dist = distance(destLat, destLong, currentLat,
 						currentLong);
-
+				
 				//latlong.setText("Distance to destination: "
 				//		+ String.valueOf(dist));
 				LatLng latLng = new LatLng(loc.getLatitude(), loc.getLongitude());
@@ -453,8 +438,6 @@ public class StandbyScreen extends FragmentActivity implements ActionBar.TabList
             View rootView = inflater.inflate(R.layout.fragment_section_dummy, container, false);
          // Gets the MapView from the XML layout and creates it
             mapView = (MapView) rootView.findViewById(R.id.mapview);
-            //GoogleMapOptions options = new GoogleMapOptions();
-           // mapView=new MapView(map, options)
             
             mapView.onCreate(savedInstanceState);
             mapView.onResume(); //without this, map showed but was empty 
@@ -471,11 +454,11 @@ public class StandbyScreen extends FragmentActivity implements ActionBar.TabList
             .position(new LatLng(destLat, destLong)));
             //map.setPadding(-200, 0, 0, 0);
             // Needs to call MapsInitializer before doing any CameraUpdateFactory calls
-            try {
+          //  try {
                 MapsInitializer.initialize(this.getActivity());
-            } catch (GooglePlayServicesNotAvailableException e) {
-                e.printStackTrace();
-            }
+            //} catch (GooglePlayServicesNotAvailableException e) {
+            //    e.printStackTrace();
+          //  }
             //Bundle args = getArguments();
             //((TextView) rootView.findViewById(android.R.id.text1)).setText(
             //        getString(R.string.dummy_section_text, args.getInt(ARG_SECTION_NUMBER)));
